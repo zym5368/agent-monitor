@@ -62,10 +62,19 @@ jobs:
       - name: Collect release assets
         shell: pwsh
         run: |
+          $ErrorActionPreference = "Stop"
           New-Item -ItemType Directory -Force -Path "agent-monitor/app/release-assets" | Out-Null
-          Copy-Item "agent-monitor/app/electron-dist/集群管理 Setup 0.1.0.exe" "agent-monitor/app/release-assets/cluster-manager-setup-win-x64.exe" -Force
-          Copy-Item "agent-monitor/app/electron-dist/集群管理 0.1.0.exe" "agent-monitor/app/release-assets/cluster-manager-portable-win-x64.exe" -Force
-          Copy-Item "agent-monitor/app/android/app/build/outputs/apk/release/app-release.apk" "agent-monitor/app/release-assets/cluster-manager-android-release.apk" -Force
+          $setupExe = Get-ChildItem "agent-monitor/app/electron-dist" -Filter "*Setup*.exe" | Select-Object -First 1
+          if ($null -eq $setupExe) { throw "Setup exe not found in electron-dist" }
+          Copy-Item $setupExe.FullName "agent-monitor/app/release-assets/cluster-manager-setup-win-x64.exe" -Force
+
+          $portableExe = Get-ChildItem "agent-monitor/app/electron-dist" -Filter "*.exe" | Where-Object { $_.Name -notlike "*Setup*" } | Select-Object -First 1
+          if ($null -eq $portableExe) { throw "Portable exe not found in electron-dist" }
+          Copy-Item $portableExe.FullName "agent-monitor/app/release-assets/cluster-manager-portable-win-x64.exe" -Force
+
+          $apk = Get-ChildItem "agent-monitor/app/android/app/build/outputs/apk/release" -Filter "*.apk" | Select-Object -First 1
+          if ($null -eq $apk) { throw "No APK found in android release outputs" }
+          Copy-Item $apk.FullName "agent-monitor/app/release-assets/cluster-manager-android-release.apk" -Force
 
       - name: Generate release notes body
         shell: pwsh
