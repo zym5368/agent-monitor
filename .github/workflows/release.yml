@@ -1,0 +1,92 @@
+name: Release Build And Publish
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag, e.g. v0.1.2'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: windows-latest
+    env:
+      RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.tag || github.ref_name }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: agent-monitor/app/package-lock.json
+
+      - name: Install app deps
+        working-directory: agent-monitor/app
+        run: npm ci
+
+      - name: Build desktop artifacts
+        working-directory: agent-monitor/app
+        run: npm run build:artifacts-win
+
+      - name: Build Android apk
+        working-directory: agent-monitor/app
+        run: |
+          npm run build:mobile
+          npx cap sync android
+          cd android
+          .\gradlew.bat assembleRelease --no-daemon
+
+      - name: Collect release assets
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path "agent-monitor/app/release-assets" | Out-Null
+          Copy-Item "agent-monitor/app/electron-dist/集群管理 Setup 0.1.0.exe" "agent-monitor/app/release-assets/cluster-manager-setup-win-x64.exe" -Force
+          Copy-Item "agent-monitor/app/electron-dist/集群管理 0.1.0.exe" "agent-monitor/app/release-assets/cluster-manager-portable-win-x64.exe" -Force
+          Copy-Item "agent-monitor/app/android/app/build/outputs/apk/release/app-release.apk" "agent-monitor/app/release-assets/cluster-manager-android-release.apk" -Force
+
+      - name: Generate release notes body
+        shell: pwsh
+        run: |
+          $notes = @"
+          ## Cluster Manager $env:RELEASE_TAG
+
+          ### 更新内容
+          - 自动构建并发布桌面端与移动端安装包
+          - 同步最新代码对应产物，避免手工漏传
+          - Release 文案统一格式，避免乱码
+
+          ### 安装方式
+          - Windows 安装版：cluster-manager-setup-win-x64.exe
+          - Windows 便携版：cluster-manager-portable-win-x64.exe
+          - Android：cluster-manager-android-release.apk
+          "@
+          Set-Content -Path "release-notes.md" -Value $notes -Encoding utf8
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.RELEASE_TAG }}
+          name: Cluster Manager ${{ env.RELEASE_TAG }}
+          body_path: release-notes.md
+          files: |
+            agent-monitor/app/release-assets/cluster-manager-setup-win-x64.exe
+            agent-monitor/app/release-assets/cluster-manager-portable-win-x64.exe
+            agent-monitor/app/release-assets/cluster-manager-android-release.apk

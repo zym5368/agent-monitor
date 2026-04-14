@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import { useServersStore } from '@/store/servers'
 import {
   fetchContainers,
@@ -12,6 +12,7 @@ import {
   fetchContainerLogs,
 } from '@/api/client'
 import type { Server, ContainerInfo, DockerOverview, DockerImageInfo } from '@/shared/types'
+import { ConfirmDialog } from '@/mobile/components/ConfirmDialog'
 
 function getStateColor(state: string): string {
   const s = state.toLowerCase()
@@ -105,11 +106,15 @@ function ContainerCard({
   server,
   onRefresh,
   onViewLogs,
+  onRequestRemove,
+  removingContainerId,
 }: {
   container: ContainerInfo
   server: Server
   onRefresh: () => void
   onViewLogs: (id: string) => void
+  onRequestRemove: (container: ContainerInfo) => void
+  removingContainerId: string | null
 }) {
   const [loading, setLoading] = useState<string | null>(null)
 
@@ -127,9 +132,7 @@ function ContainerCard({
         success = await restartContainer(server, id)
         break
       case 'remove':
-        if (confirm('确定要删除这个容器吗？')) {
-          success = await removeContainer(server, id, true)
-        }
+        onRequestRemove(container)
         break
     }
     setLoading(null)
@@ -220,11 +223,11 @@ function ContainerCard({
         </button>
         <button
           onClick={() => handleAction('remove', container.id)}
-          disabled={loading !== null}
+          disabled={loading !== null || removingContainerId === container.id}
           className="mobile-action-button"
           style={{ background: 'transparent', border: '1px solid rgba(239, 68, 68, 0.4)', color: '#fca5a5' }}
         >
-          {loading === 'remove' ? '…' : '删除'}
+          {loading === 'remove' || removingContainerId === container.id ? '…' : '删除'}
         </button>
       </div>
     </div>
@@ -355,6 +358,16 @@ export function MobileContainers() {
   const [viewingLogsId, setViewingLogsId] = useState<string | null>(null)
   const [filter, setFilter] = useState<'all' | 'running' | 'stopped'>('all')
   const [showImages, setShowImages] = useState(false)
+  const [removingImageRef, setRemovingImageRef] = useState<string | null>(null)
+  const [removingContainerId, setRemovingContainerId] = useState<string | null>(null)
+  const [dialogOpen, setDialogOpen] = useState(false)
+  const [dialogTitle, setDialogTitle] = useState('')
+  const [dialogMessage, setDialogMessage] = useState('')
+  const [dialogConfirmText, setDialogConfirmText] = useState('确认')
+  const [dialogHideCancel, setDialogHideCancel] = useState(false)
+  const [dialogDanger, setDialogDanger] = useState(false)
+  const [dialogLoading, setDialogLoading] = useState(false)
+  const dialogConfirmRef = useRef<(() => Promise<void> | void) | null>(null)
 
   const selectedServer = servers.find((s) => s.id === selectedServerId)
 
@@ -378,15 +391,81 @@ export function MobileContainers() {
     setImagesLoading(false)
   }
 
-  const handleRemoveImage = async (ref: string) => {
-    if (!selectedServer) return
-    if (!confirm(`确定要删除镜像 ${ref} 吗？`)) return
-    const ok = await removeDockerImage(selectedServer, ref, true)
-    if (ok) {
-      await Promise.all([loadImages(), loadContainers()])
-    } else {
-      alert('删除镜像失败，请检查该镜像是否被容器占用。')
+  const openNotice = (title: string, message: string) => {
+    setDialogTitle(title)
+    setDialogMessage(message)
+    setDialogConfirmText('我知道了')
+    setDialogHideCancel(true)
+    setDialogDanger(false)
+    dialogConfirmRef.current = () => {
+      setDialogOpen(false)
     }
+    setDialogOpen(true)
+  }
+
+  const openConfirm = (
+    title: string,
+    message: string,
+    onConfirm: () => Promise<void> | void,
+    confirmText = '确认删除'
+  ) => {
+    setDialogTitle(title)
+    setDialogMessage(message)
+    setDialogConfirmText(confirmText)
+    setDialogHideCancel(false)
+    setDialogDanger(true)
+    dialogConfirmRef.current = onConfirm
+    setDialogOpen(true)
+  }
+
+  const handleRemoveImage = (ref: string) => {
+    if (!selectedServer) return
+    openConfirm('删除镜像', `确定删除镜像 ${ref} 吗？`, async () => {
+      const scrollY = window.scrollY
+      setDialogLoading(true)
+      setRemovingImageRef(ref)
+      const ok = await removeDockerImage(selectedServer, ref, true)
+      if (ok) {
+        setImages((prev) =>
+          prev.filter((img) => {
+            const currentRef =
+              img.repo_tags?.[0] && img.repo_tags[0] !== '<none>:<none>' ? img.repo_tags[0] : img.id
+            return currentRef !== ref
+          })
+        )
+        setOverview((prev) => {
+          if (!prev) return prev
+          return {
+            ...prev,
+            images_total: Math.max(0, prev.images_total - 1),
+          }
+        })
+        await loadContainers()
+        requestAnimationFrame(() => window.scrollTo({ top: scrollY, behavior: 'auto' }))
+      } else {
+        openNotice('删除失败', '删除镜像失败，请检查该镜像是否仍被容器占用。')
+      }
+      setRemovingImageRef(null)
+      setDialogLoading(false)
+      setDialogOpen(false)
+    })
+  }
+
+  const handleRemoveContainer = (container: ContainerInfo) => {
+    if (!selectedServer) return
+    openConfirm('删除容器', `确定删除容器 ${container.name} 吗？`, async () => {
+      setDialogLoading(true)
+      setRemovingContainerId(container.id)
+      const ok = await removeContainer(selectedServer, container.id, true)
+      if (ok) {
+        await loadContainers()
+      } else {
+        openNotice('删除失败', '删除容器失败，请稍后重试。')
+      }
+      setRemovingContainerId(null)
+      setDialogLoading(false)
+      setDialogOpen(false)
+    })
   }
 
   useEffect(() => {
@@ -554,6 +633,8 @@ export function MobileContainers() {
                     server={selectedServer!}
                     onRefresh={loadContainers}
                     onViewLogs={setViewingLogsId}
+                    onRequestRemove={handleRemoveContainer}
+                    removingContainerId={removingContainerId}
                   />
                 ))
               )}
@@ -629,10 +710,11 @@ export function MobileContainers() {
                       </div>
                       <button
                         onClick={() => handleRemoveImage(ref)}
+                                disabled={removingImageRef === ref}
                         className="mobile-button mobile-button-danger"
                         style={{ width: '100%', padding: '8px 16px', minHeight: 40, fontSize: 13 }}
                       >
-                        删除镜像
+                                {removingImageRef === ref ? '删除中…' : '删除镜像'}
                       </button>
                     </div>
                   )
@@ -650,6 +732,22 @@ export function MobileContainers() {
           onClose={() => setViewingLogsId(null)}
         />
       )}
+      <ConfirmDialog
+        open={dialogOpen}
+        title={dialogTitle}
+        message={dialogMessage}
+        confirmText={dialogConfirmText}
+        loading={dialogLoading}
+        hideCancel={dialogHideCancel}
+        variant={dialogDanger ? 'danger' : 'default'}
+        onCancel={() => {
+          if (!dialogLoading) setDialogOpen(false)
+        }}
+        onConfirm={() => {
+          const fn = dialogConfirmRef.current
+          if (fn) void fn()
+        }}
+      />
     </div>
   )
 }

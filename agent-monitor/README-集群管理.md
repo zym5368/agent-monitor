@@ -14,7 +14,7 @@
 ### 本地运行
 
 ```bash
-cd agent
+cd agent-monitor/agent
 go mod tidy
 go run .
 # 默认监听 :9100，无 API Key
@@ -43,7 +43,7 @@ GOOS=linux GOARCH=amd64 go build -o agent .
 ### 安装与运行
 
 ```bash
-cd app
+cd agent-monitor/app
 npm install
 # 仅前端开发
 npm run dev

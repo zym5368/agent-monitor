@@ -19,7 +19,7 @@
 ### 1) Agent
 
 ```bash
-cd agent
+cd agent-monitor/agent
 go mod tidy
 go run .
 ```
@@ -34,7 +34,7 @@ go run .
 ### 2) 客户端
 
 ```bash
-cd app
+cd agent-monitor/app
 npm install
 npm run electron:dev
 ```
@@ -44,7 +44,7 @@ npm run electron:dev
 ### Windows 客户端
 
 ```bash
-cd app
+cd agent-monitor/app
 npm run build:artifacts
 npx electron-builder --win --publish never
 ```
@@ -52,7 +52,7 @@ npx electron-builder --win --publish never
 ### Android APK
 
 ```bash
-cd app
+cd agent-monitor/app
 npm run build:mobile
 npx cap sync android
 cd android

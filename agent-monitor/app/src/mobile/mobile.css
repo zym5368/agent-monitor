@@ -570,6 +570,49 @@ html, body {
   color: white;
 }
 
+/* ==================== Modal ==================== */
+.mobile-modal-mask {
+  position: fixed;
+  inset: 0;
+  z-index: 1400;
+  background: rgba(2, 6, 23, 0.72);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.mobile-modal-card {
+  width: min(520px, 100%);
+  background: linear-gradient(160deg, rgba(30, 41, 59, 0.98), rgba(15, 23, 42, 0.98));
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  padding: 18px;
+  box-shadow: 0 22px 52px rgba(0, 0, 0, 0.45);
+}
+
+.mobile-modal-title {
+  margin: 0;
+  font-size: 18px;
+  color: var(--color-text-primary);
+}
+
+.mobile-modal-message {
+  margin: 10px 0 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.mobile-modal-actions {
+  margin-top: 16px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
 /* ==================== Reduced Motion ==================== */
 @media (prefers-reduced-motion: reduce) {
   * {

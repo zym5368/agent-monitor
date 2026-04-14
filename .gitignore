@@ -1,28 +1,25 @@
-﻿# Keep repo focused on app + agent only
+﻿# Keep repo focused on agent-monitor project
 *
 !/.gitignore
-!/agent/
-!/agent/**
-!/app/
-!/app/**
-!/README.md
-!/Agent部署文档.md
-!/README-集群管理.md
+!/agent-monitor/
+!/agent-monitor/**
+!/.github/
+!/.github/**
 
 # Exclude heavy/generated artifacts inside app
-app/node_modules/
-app/dist/
-app/dist-mobile/
-app/electron-dist/
-app/electron-repack-*/
-app/android/.gradle/
-app/android/build/
-app/android/app/build/
-app/release-assets/
+agent-monitor/app/node_modules/
+agent-monitor/app/dist/
+agent-monitor/app/dist-mobile/
+agent-monitor/app/electron-dist/
+agent-monitor/app/electron-repack-*/
+agent-monitor/app/android/.gradle/
+agent-monitor/app/android/build/
+agent-monitor/app/android/app/build/
+agent-monitor/app/release-assets/
 
 # Exclude binary artifacts inside agent
-agent/releases/cluster-agent-*
-agent/sc-out.txt
+agent-monitor/agent/releases/cluster-agent-*
+agent-monitor/agent/sc-out.txt
 
 # Misc
 .specstory/
@@ -30,12 +27,12 @@ agent/sc-out.txt
 *.log
 
 # Sensitive files
-app/android/keystore/*.jks
-app/android/keystore/*.keystore
+agent-monitor/app/android/keystore/*.jks
+agent-monitor/app/android/keystore/*.keystore
 
 # Local binaries
-agent/*.exe
-agent/*.out
+agent-monitor/agent/*.exe
+agent-monitor/agent/*.out
 
 # Local icon temp
-app/build/
+agent-monitor/app/build/

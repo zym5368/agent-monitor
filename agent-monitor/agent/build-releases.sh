@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # 多平台编译 cluster-agent，输出到 releases/
-# 用法：cd agent && chmod +x build-releases.sh && ./build-releases.sh
+# 用法：cd agent-monitor/agent && chmod +x build-releases.sh && ./build-releases.sh
 
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")" && pwd)"

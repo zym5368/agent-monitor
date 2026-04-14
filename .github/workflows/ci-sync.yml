@@ -1,0 +1,53 @@
+name: CI Sync
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: agent-monitor/agent/go.mod
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: agent-monitor/app/package-lock.json
+
+      - name: Test agent
+        working-directory: agent-monitor/agent
+        run: go test ./...
+
+      - name: Install app deps
+        working-directory: agent-monitor/app
+        run: npm ci
+
+      - name: Build app web and mobile bundles
+        working-directory: agent-monitor/app
+        run: npm run build:artifacts
+
+      - name: Upload web bundle artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-dist
+          path: agent-monitor/app/dist
+
+      - name: Upload mobile bundle artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-dist-mobile
+          path: agent-monitor/app/dist-mobile
