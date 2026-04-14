@@ -16,7 +16,12 @@ function barColorClass(percent: number): 'low' | 'mid' | 'high' {
 function mountShortLabel(path: string): string {
   const clean = path.replace(/\/+$/, '')
   const parts = clean.split('/').filter(Boolean)
-  return parts.length > 0 ? parts[parts.length - 1] : path
+  const last = parts.length > 0 ? parts[parts.length - 1] : path
+  const poolMatch = /^CACHEDEV(\d+)_DATA$/i.exec(last)
+  if (poolMatch != null) {
+    return `存储池${poolMatch[1]}`
+  }
+  return last
 }
 
 function MetricBar({
