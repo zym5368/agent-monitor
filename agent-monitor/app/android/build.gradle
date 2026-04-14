@@ -3,11 +3,12 @@
 buildscript {
     
     repositories {
+        google()
+        mavenCentral()
+        // mirror fallback for constrained networks
         maven { url 'https://maven.aliyun.com/repository/google' }
         maven { url 'https://maven.aliyun.com/repository/public' }
         maven { url 'https://mirrors.huaweicloud.com/repository/maven/' }
-        google()
-        mavenCentral()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:8.13.0'
@@ -22,11 +23,12 @@ apply from: "variables.gradle"
 
 allprojects {
     repositories {
+        google()
+        mavenCentral()
+        // mirror fallback for constrained networks
         maven { url 'https://maven.aliyun.com/repository/google' }
         maven { url 'https://maven.aliyun.com/repository/public' }
         maven { url 'https://mirrors.huaweicloud.com/repository/maven/' }
-        google()
-        mavenCentral()
     }
 }
 
