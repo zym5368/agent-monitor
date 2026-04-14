@@ -1,0 +1,66 @@
+{
+  "name": "cluster-manager",
+  "version": "0.1.0",
+  "private": true,
+  "main": "electron/main.cjs",
+  "scripts": {
+    "dev": "vite",
+    "dev:mobile": "vite --mode mobile",
+    "build": "tsc -b && vite build && electron-builder",
+    "build:web": "tsc -b && vite build",
+    "build:mobile": "vite build --mode mobile && node -e \"require('fs').renameSync('dist-mobile/index.mobile.html','dist-mobile/index.html')\"",
+    "build:artifacts": "npm run build:mobile && vite build",
+    "build:electron-win": "electron-builder --win --publish never",
+    "build:artifacts-win": "npm run build:artifacts && npm run build:electron-win",
+    "preview": "vite preview",
+    "preview:mobile": "vite preview --mode mobile --outDir dist-mobile",
+    "electron:dev": "concurrently \"vite\" \"wait-on http://localhost:5173 && electron .\"",
+    "electron:build": "vite build && electron-builder",
+    "audit:fix": "npm audit fix"
+  },
+  "build": {
+    "appId": "com.cluster-manager.app",
+    "productName": "集群管理",
+    "directories": {
+      "output": "electron-dist"
+    },
+    "files": [
+      "dist",
+      "electron"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "portable",
+          "arch": ["x64"]
+        },
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        }
+      ],
+      "signAndEditExecutable": false
+    }
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.3.0",
+    "@capacitor/cli": "^8.3.0",
+    "@capacitor/core": "^8.3.0",
+    "js-md5": "^0.8.3",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.21.0",
+    "zustand": "^4.4.7"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.45",
+    "@types/react-dom": "^18.2.18",
+    "@vitejs/plugin-react": "^4.2.1",
+    "concurrently": "^8.2.2",
+    "electron": "^28.1.0",
+    "electron-builder": "^25.0.0",
+    "typescript": "^5.3.3",
+    "vite": "^5.4.0",
+    "wait-on": "^7.2.0"
+  }
+}

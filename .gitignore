@@ -1,0 +1,39 @@
+﻿# Keep repo focused on app + agent only
+*
+!/.gitignore
+!/agent/
+!/agent/**
+!/app/
+!/app/**
+!/Agent部署文档.md
+!/README-集群管理.md
+
+# Exclude heavy/generated artifacts inside app
+app/node_modules/
+app/dist/
+app/dist-mobile/
+app/electron-dist/
+app/electron-repack-*/
+app/android/.gradle/
+app/android/build/
+app/android/app/build/
+
+# Exclude binary artifacts inside agent
+agent/releases/cluster-agent-*
+agent/sc-out.txt
+
+# Misc
+.specstory/
+.vscode/
+*.log
+
+# Sensitive files
+app/android/keystore/*.jks
+app/android/keystore/*.keystore
+
+# Local binaries
+agent/*.exe
+agent/*.out
+
+# Local icon temp
+app/build/

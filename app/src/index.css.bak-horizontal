@@ -1,0 +1,195 @@
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, sans-serif;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+  color: #e2e8f0;
+  min-height: 100vh;
+}
+#root { min-height: 100vh; }
+
+/* 全局滚动条美化 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #1e293b;
+}
+::-webkit-scrollbar-thumb {
+  background: #475569;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+/* 仪表盘样式 */
+.dashboard-metric-bar {
+  margin-bottom: 14px;
+  padding: 12px;
+  background: rgba(15, 23, 42, 0.6);
+  border-radius: 10px;
+  border: 1px solid rgba(71, 85, 105, 0.3);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+.dashboard-metric-bar:hover {
+  border-color: rgba(99, 102, 241, 0.4);
+  background: rgba(15, 23, 42, 0.8);
+  transform: translateY(-2px);
+}
+.dashboard-metric-bar:last-child { margin-bottom: 0; }
+.dashboard-metric-bar .label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+.dashboard-metric-bar .label-row span:first-child {
+  color: #94a3b8;
+  text-transform: uppercase;
+  font-size: 16px;
+  letter-spacing: 1px;
+}
+.dashboard-metric-bar .label-row span:last-child {
+  font-size: 18px;
+  font-weight: 600;
+  color: #f1f5f9;
+}
+.dashboard-metric-bar .bar-outer {
+  height: 10px;
+  background: rgba(15, 23, 42, 0.8);
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+}
+.dashboard-metric-bar .bar-outer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.05), transparent);
+  border-radius: 10px;
+}
+.dashboard-metric-bar .bar-inner {
+  height: 100%;
+  border-radius: 10px;
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+.dashboard-metric-bar .bar-inner::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -50%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+  animation: shimmer 2s infinite;
+}
+@keyframes shimmer {
+  0% { left: -50%; }
+  100% { left: 150%; }
+}
+.dashboard-metric-bar .bar-inner.low {
+  background: linear-gradient(90deg, #22c55e, #4ade80);
+  box-shadow: 0 0 20px rgba(34, 197, 94, 0.3);
+}
+.dashboard-metric-bar .bar-inner.mid {
+  background: linear-gradient(90deg, #f59e0b, #facc15);
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.3);
+}
+.dashboard-metric-bar .bar-inner.high {
+  background: linear-gradient(90deg, #ef4444, #f87171);
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+}
+.dashboard-metric-bar .detail {
+  font-size: 16px;
+  color: #64748b;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.dashboard-metric-bar .detail::before {
+  content: '';
+  width: 4px;
+  height: 4px;
+  background: #64748b;
+  border-radius: 50%;
+}
+.dashboard-metric-bar.gpu-section {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(71, 85, 105, 0.4);
+}
+
+/* 统计卡片样式 */
+.stat-card {
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9));
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid rgba(71, 85, 105, 0.3);
+  backdrop-filter: blur(20px);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #6366f1, #8b5cf6, #a855f7);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.stat-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(99, 102, 241, 0.5);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+.stat-card:hover::before {
+  opacity: 1;
+}
+.stat-card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  margin-bottom: 12px;
+}
+.stat-card-label {
+  font-size: 12px;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+.stat-card-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: #f8fafc;
+  line-height: 1.2;
+}
+.stat-card-trend {
+  font-size: 13px;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.stat-card-trend.up { color: #22c55e; }
+.stat-card-trend.down { color: #ef4444; }

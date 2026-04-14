@@ -1,0 +1,19 @@
+{
+  "cpu": {
+    "id": "system.cpu",
+    "units": "percentage",
+    "dimensions": ["user", "system", "nice", "iowait", "irq", "softirq", "steal", "guest", "guest_nice"],
+    "note": "no idle dimension; usage = sum of dimensions"
+  },
+  "ram": {
+    "id": "system.ram",
+    "units": "MiB",
+    "dimensions": ["free", "used", "cached", "buffers"]
+  },
+  "disk": {
+    "units": "GiB",
+    "dimensions": ["used", "avail"],
+    "idPattern": "disk_space.",
+    "exampleIds": ["disk_space._dev", "disk_space._run", "disk_space._run_lock", "disk_space._run_qemu", "disk_space._dev_shm"]
+  }
+}
