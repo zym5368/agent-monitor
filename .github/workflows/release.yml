@@ -34,7 +34,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
           cache-dependency-path: agent-monitor/app/package-lock.json
 
@@ -48,11 +48,16 @@ jobs:
 
       - name: Build Android apk
         working-directory: agent-monitor/app
+        shell: pwsh
         run: |
+          $ErrorActionPreference = "Stop"
           npm run build:mobile
+          if ($LASTEXITCODE -ne 0) { throw "npm run build:mobile failed" }
           npx cap sync android
+          if ($LASTEXITCODE -ne 0) { throw "npx cap sync android failed" }
           cd android
           .\gradlew.bat assembleRelease --no-daemon
+          if ($LASTEXITCODE -ne 0) { throw "gradlew assembleRelease failed" }
 
       - name: Collect release assets
         shell: pwsh
