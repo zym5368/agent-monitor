@@ -5,6 +5,7 @@
 !/agent/**
 !/app/
 !/app/**
+!/README.md
 !/Agent部署文档.md
 !/README-集群管理.md
 
@@ -17,6 +18,7 @@ app/electron-repack-*/
 app/android/.gradle/
 app/android/build/
 app/android/app/build/
+app/release-assets/
 
 # Exclude binary artifacts inside agent
 agent/releases/cluster-agent-*
