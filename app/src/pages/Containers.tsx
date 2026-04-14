@@ -676,7 +676,7 @@ export function Containers() {
               gridTemplateColumns: 'repeat(auto-fit, minmax(460px, 1fr))',
               gap: 10,
               marginBottom: 12,
-              alignItems: 'start',
+              alignItems: 'stretch',
             }}
           >
             <div
@@ -685,17 +685,21 @@ export function Containers() {
                 borderRadius: 12,
                 border: '1px solid rgba(71, 85, 105, 0.4)',
                 padding: 14,
+                minHeight: 340,
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column',
               }}
             >
-              <details open>
+              <details open style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 }}>
                 <summary style={{ color: '#f8fafc', cursor: 'pointer', fontSize: 15, fontWeight: 600 }}>
                   端口占用汇总（共 {portSummary.length} 项，点击展开）
                 </summary>
-                <div style={{ marginTop: 8 }}>
+                <div style={{ marginTop: 8, flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
                   {portSummary.length === 0 ? (
                     <div style={{ color: '#64748b', fontSize: 13 }}>无端口占用数据</div>
                   ) : (
-                    <div style={{ maxHeight: 220, overflow: 'auto' }}>
+                    <div style={{ flex: 1, minHeight: 0, overflow: 'auto' }}>
                       <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
                         <thead>
                           <tr style={{ color: '#94a3b8', borderBottom: '1px solid rgba(71, 85, 105, 0.35)' }}>
@@ -728,6 +732,10 @@ export function Containers() {
                 borderRadius: 12,
                 border: '1px solid rgba(71, 85, 105, 0.4)',
                 padding: 14,
+                minHeight: 340,
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column',
               }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
@@ -739,7 +747,7 @@ export function Containers() {
               ) : images.length === 0 ? (
                 <div style={{ color: '#64748b', fontSize: 13 }}>暂无镜像</div>
               ) : (
-                <div style={{ maxHeight: 220, overflow: 'auto' }}>
+                <div style={{ flex: 1, minHeight: 0, overflow: 'auto' }}>
                   <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
                     <thead>
                       <tr style={{ color: '#94a3b8', borderBottom: '1px solid rgba(71, 85, 105, 0.35)' }}>
