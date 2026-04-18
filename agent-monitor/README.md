@@ -66,6 +66,27 @@ cd android
 - **无该文件时**（含 GitHub Actions 默认环境）：`release` 使用 **debug 签名**，便于侧载安装；这与本地 Android Studio 里配好 keystore 打出来的包 **证书不同**，覆盖安装会冲突，需先卸载旧包。
 - CI 在收集产物前会 **`apksigner verify`**，避免再发布未签名 APK。
 
+### 在 GitHub 上配置正式 APK 签名（可选）
+
+在仓库 **Settings → Secrets and variables → Actions → New repository secret** 添加：
+
+| Secret 名称 | 含义 |
+|-------------|------|
+| `ANDROID_RELEASE_KEYSTORE_BASE64` | 密钥库 `.jks` 文件的 **Base64** 整串（见下方生成命令） |
+| `ANDROID_RELEASE_STORE_PASSWORD` | 密钥库密码（`storePassword`） |
+| `ANDROID_RELEASE_KEY_PASSWORD` | 密钥密码（`keyPassword`） |
+| `ANDROID_RELEASE_KEY_ALIAS` | 可选，默认 `cluster_manager` |
+
+配置后，`.github/workflows/release.yml` 会在构建前写出 `keystore.properties` 与 `keystore/cluster-manager-release.jks`，**Release APK 与本地正式签名一致**，可与旧版覆盖安装。未配置上述 Secret 时仍使用 **debug 签名**（需先卸载旧包再装）。
+
+**在本机把 `.jks` 转成 Base64（PowerShell）：**
+
+```powershell
+[Convert]::ToBase64String([IO.File]::ReadAllBytes("D:\path\to\cluster-manager-release.jks")) | Set-Clipboard
+```
+
+将剪贴板内容整段粘贴到 `ANDROID_RELEASE_KEYSTORE_BASE64`，不要换行、不要加引号。
+
 ## 发布下载
 
 最新构建产物发布在 GitHub Releases：

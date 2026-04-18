@@ -46,6 +46,39 @@ jobs:
         working-directory: agent-monitor/app
         run: npm run build:artifacts-win
 
+      # 若仓库已配置下方 Secrets，则生成 android/keystore.properties + keystore/*.jks，assembleRelease 使用正式签名；
+      # 未配置时沿用 build.gradle 的 debug 签名回退（可安装，证书与正式包不同）。
+      - name: Prepare Android release keystore from GitHub Secrets
+        shell: pwsh
+        env:
+          KEYSTORE_B64: ${{ secrets.ANDROID_RELEASE_KEYSTORE_BASE64 }}
+          STORE_PASSWORD: ${{ secrets.ANDROID_RELEASE_STORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_RELEASE_KEY_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_RELEASE_KEY_ALIAS }}
+        run: |
+          $ErrorActionPreference = "Stop"
+          $androidRoot = Join-Path $PWD "agent-monitor/app/android"
+          if ([string]::IsNullOrWhiteSpace($env:KEYSTORE_B64)) {
+            Write-Host "[Info] 未配置 ANDROID_RELEASE_KEYSTORE_BASE64，Release APK 将使用 debug 证书签名。"
+            exit 0
+          }
+          if ([string]::IsNullOrWhiteSpace($env:STORE_PASSWORD) -or [string]::IsNullOrWhiteSpace($env:KEY_PASSWORD)) {
+            throw "已设置 ANDROID_RELEASE_KEYSTORE_BASE64，请同时配置 ANDROID_RELEASE_STORE_PASSWORD 与 ANDROID_RELEASE_KEY_PASSWORD"
+          }
+          $alias = $(if ([string]::IsNullOrWhiteSpace($env:KEY_ALIAS)) { "cluster_manager" } else { $env:KEY_ALIAS })
+          $ksDir = Join-Path $androidRoot "keystore"
+          New-Item -ItemType Directory -Force -Path $ksDir | Out-Null
+          $ksPath = Join-Path $ksDir "cluster-manager-release.jks"
+          [IO.File]::WriteAllBytes($ksPath, [Convert]::FromBase64String($env:KEYSTORE_B64))
+          $propsPath = Join-Path $androidRoot "keystore.properties"
+          @(
+            "storeFile=keystore/cluster-manager-release.jks",
+            "storePassword=$($env:STORE_PASSWORD)",
+            "keyPassword=$($env:KEY_PASSWORD)",
+            "keyAlias=$alias"
+          ) | Set-Content -Path $propsPath -Encoding utf8
+          Write-Host "[Info] 已写入 release keystore 与 keystore.properties（正式签名）。"
+
       - name: Build Android apk
         working-directory: agent-monitor/app
         shell: pwsh
