@@ -59,6 +59,13 @@ cd android
 ./gradlew assembleRelease
 ```
 
+**签名说明（避免「Release 里 APK 装不上」）：**
+
+- `android/keystore.properties` 与密钥库 **不会进 Git**（见 `android/.gitignore`）。
+- 仅当存在 `keystore.properties` 时，`assembleRelease` 使用 **正式 release 签名**。
+- **无该文件时**（含 GitHub Actions 默认环境）：`release` 使用 **debug 签名**，便于侧载安装；这与本地 Android Studio 里配好 keystore 打出来的包 **证书不同**，覆盖安装会冲突，需先卸载旧包。
+- CI 在收集产物前会 **`apksigner verify`**，避免再发布未签名 APK。
+
 ## 发布下载
 
 最新构建产物发布在 GitHub Releases：
