@@ -37,8 +37,12 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            // 无 keystore.properties 时（如 GitHub CI）若不做签名，assembleRelease 会产出未签名 APK，手机安装会报「解析包异常」等。
+            // 回退为 debug 签名：可正常侧载安装；上架商店请配置 keystore.properties 使用 signingConfigs.release。
             if (keystorePropertiesFile.exists()) {
                 signingConfig signingConfigs.release
+            } else {
+                signingConfig signingConfigs.debug
             }
         }
     }

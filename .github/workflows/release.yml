@@ -59,6 +59,22 @@ jobs:
           .\gradlew.bat assembleRelease --no-daemon
           if ($LASTEXITCODE -ne 0) { throw "gradlew assembleRelease failed" }
 
+      - name: Verify release APK is signed
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          $apk = Get-ChildItem "agent-monitor/app/android/app/build/outputs/apk/release" -Filter "*.apk" | Select-Object -First 1
+          if ($null -eq $apk) { throw "No APK to verify" }
+          $sdkRoot = $env:ANDROID_SDK_ROOT
+          if ([string]::IsNullOrWhiteSpace($sdkRoot)) { $sdkRoot = $env:ANDROID_HOME }
+          if ([string]::IsNullOrWhiteSpace($sdkRoot)) { throw "ANDROID_SDK_ROOT / ANDROID_HOME not set" }
+          $btRoot = Join-Path $sdkRoot "build-tools"
+          $btDir = Get-ChildItem $btRoot -Directory -ErrorAction Stop | Sort-Object Name -Descending | Select-Object -First 1
+          $apksigner = Join-Path $btDir.FullName "apksigner.bat"
+          if (-not (Test-Path -LiteralPath $apksigner)) { throw "apksigner not found: $apksigner" }
+          Write-Host "Verifying: $($apk.FullName)"
+          & $apksigner verify --verbose $apk.FullName
+
       - name: Collect release assets
         shell: pwsh
         run: |

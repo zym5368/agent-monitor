@@ -27,6 +27,7 @@ agent-monitor/agent/sc-out.txt
 *.log
 
 # Sensitive files
+agent-monitor/agent/releases/agent-install.local.bat
 agent-monitor/app/android/keystore/*.jks
 agent-monitor/app/android/keystore/*.keystore
 
