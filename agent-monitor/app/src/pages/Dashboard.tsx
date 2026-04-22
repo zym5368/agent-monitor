@@ -24,32 +24,34 @@ function mountShortLabel(path: string): string {
   return last
 }
 
-function MetricBar({
+function MetricStripItem({
   label,
   percent,
-  detail,
-  extra,
-}: { label: string; percent: number; detail?: string; extra?: React.ReactNode }) {
+  mainSuffix,
+  subValue,
+}: {
+  label: string
+  percent: number
+  mainSuffix?: string
+  subValue?: string
+}) {
   const pct = Math.min(100, Math.max(0, percent))
   const colorClass = barColorClass(pct)
   return (
-    <div className="dashboard-metric-bar">
-      <div className="label-row">
-        <span>{label}</span>
-        <span>
-          {pct.toFixed(1)}%{extra != null && <span style={{ marginLeft: 8, fontSize: 13, fontWeight: 400, color: '#94a3b8' }}>{extra}</span>}
-        </span>
+    <div className="dashboard-strip-item">
+      <div className="dashboard-strip-label">{label}</div>
+      <div className="dashboard-strip-main">
+        {pct.toFixed(1)}%
+        {mainSuffix != null && <span className="dashboard-strip-suffix">{mainSuffix}</span>}
       </div>
-      <div className="bar-outer">
-        <div
-          className={`bar-inner ${colorClass}`}
-          style={{ width: `${pct}%` }}
-        />
+      {subValue != null && <div className="dashboard-strip-sub">{subValue}</div>}
+      <div className="dashboard-strip-bar-outer">
+        <div className={`dashboard-strip-bar-inner ${colorClass}`} style={{ width: `${pct}%` }} />
       </div>
-      {detail != null && <div className="detail">{detail}</div>}
     </div>
   )
 }
+
 
 function AlertBanner({ alert }: { alert: ActiveAlert }) {
   const { acknowledgeAlert } = useAlertsStore()
@@ -589,56 +591,46 @@ export function Dashboard() {
                 </div>
               ) : (
                 <>
-                  <MetricBar
-                    label="CPU"
-                    percent={m.cpu_percent}
-                    extra={m.cpu_temperature_c != null && !Number.isNaN(m.cpu_temperature_c) ? (
-                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z" />
-                        </svg>
-                        {m.cpu_temperature_c.toFixed(0)}°C
-                      </span>
-                    ) : undefined}
-                  />
-                  <MetricBar
-                    label="内存"
-                    percent={m.memory_percent}
-                    detail={`${formatBytes(m.memory_used_bytes)} / ${formatBytes(m.memory_total_bytes)}`}
-                  />
-                  <MetricBar
-                    label="磁盘"
-                    percent={m.disk_percent}
-                    detail={`${formatBytes(m.disk_used_bytes)} / ${formatBytes(m.disk_total_bytes)}`}
-                  />
-                  {m.disk_mounts != null && m.disk_mounts.length > 0 && (
-                    <div style={{ marginTop: 10, padding: '10px 12px', borderRadius: 10, background: 'rgba(15, 23, 42, 0.45)', border: '1px solid rgba(71, 85, 105, 0.28)' }}>
-                      <div style={{ color: '#94a3b8', fontSize: 12, marginBottom: 8 }}>挂载点明细</div>
-                      {m.disk_mounts.map((mount) => (
-                        <MetricBar
-                          key={mount.path}
-                          label={mountShortLabel(mount.path)}
-                          percent={mount.used_percent}
-                          detail={`${formatBytes(mount.used_bytes)} / ${formatBytes(mount.total_bytes)} · ${mount.path}`}
-                        />
-                      ))}
-                    </div>
-                  )}
-                  {m.gpu != null && (
-                    <div style={{ marginTop: 16, paddingTop: 16, borderTop: '1px solid rgba(71, 85, 105, 0.3)' }}>
-                      <MetricBar
+                  <div className="dashboard-strip">
+                    <MetricStripItem
+                      label="CPU"
+                      percent={m.cpu_percent}
+                      mainSuffix={m.cpu_temperature_c != null && !Number.isNaN(m.cpu_temperature_c)
+                        ? `${m.cpu_temperature_c.toFixed(0)}°C`
+                        : undefined}
+                    />
+                    <MetricStripItem
+                      label="内存"
+                      percent={m.memory_percent}
+                      subValue={`${formatBytes(m.memory_used_bytes)} / ${formatBytes(m.memory_total_bytes)}`}
+                    />
+                    <MetricStripItem
+                      label="磁盘"
+                      percent={m.disk_percent}
+                      subValue={`${formatBytes(m.disk_used_bytes)} / ${formatBytes(m.disk_total_bytes)}`}
+                    />
+                    {m.gpu != null && (
+                      <MetricStripItem
                         label="GPU"
                         percent={m.gpu.utilization_percent}
-                        detail={`显存 ${formatBytes(m.gpu.memory_used_bytes)} / ${formatBytes(m.gpu.memory_total_bytes)}`}
-                        extra={
-                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                              <path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z" />
-                            </svg>
-                            {m.gpu.temperature_c.toFixed(0)}°C
-                          </span>
-                        }
+                        mainSuffix={`${m.gpu.temperature_c.toFixed(0)}°C`}
+                        subValue={`显存 ${formatBytes(m.gpu.memory_used_bytes)} / ${formatBytes(m.gpu.memory_total_bytes)}`}
                       />
+                    )}
+                  </div>
+                  {m.disk_mounts != null && m.disk_mounts.length > 0 && (
+                    <div className="dashboard-mounts">
+                      <div className="dashboard-mounts-label">挂载点明细</div>
+                      <div className="dashboard-strip">
+                        {m.disk_mounts.map((mount) => (
+                          <MetricStripItem
+                            key={mount.path}
+                            label={mountShortLabel(mount.path)}
+                            percent={mount.used_percent}
+                            subValue={`${formatBytes(mount.used_bytes)} / ${formatBytes(mount.total_bytes)}`}
+                          />
+                        ))}
+                      </div>
                     </div>
                   )}
                 </>

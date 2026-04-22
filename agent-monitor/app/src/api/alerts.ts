@@ -44,7 +44,10 @@ export function getMetricLabel(
     return `${nm.chartId} - ${nm.dimensionName}`
   }
 
-  const metric = typeof metricOrRule === 'string' ? metricOrRule : metricOrRule.metric
+  const metric: AlertMetric | undefined =
+    typeof metricOrRule === 'string'
+      ? metricOrRule
+      : ('metric' in metricOrRule ? metricOrRule.metric : undefined)
   const labels: Record<AlertMetric, string> = {
     cpu: 'CPU 使用率',
     memory: '内存使用率',
@@ -208,7 +211,7 @@ export async function sendEmailNotification(
 export async function sendWechatNotification(
   channel: NotificationChannel,
   alert: ActiveAlert,
-  message: string
+  _message: string
 ): Promise<boolean> {
   try {
     const webhookUrl = channel.config.webhookUrl
@@ -354,7 +357,7 @@ export async function sendServerchan3Notification(
 export async function sendDingtalkNotification(
   channel: NotificationChannel,
   alert: ActiveAlert,
-  message: string
+  _message: string
 ): Promise<boolean> {
   try {
     const webhookUrl = channel.config.webhookUrl

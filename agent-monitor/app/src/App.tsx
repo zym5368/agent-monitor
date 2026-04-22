@@ -61,7 +61,7 @@ function AppShell() {
           borderBottom: '1px solid rgba(71, 85, 105, 0.2)',
           WebkitAppRegion: 'drag' as any,
           zIndex: 50,
-        }}
+        } as any}
       />
 
       <div style={{ display: 'flex', minHeight: 'calc(100vh - 32px)' }}>
@@ -92,7 +92,7 @@ function AppShell() {
             flexDirection: 'column',
             minHeight: 0,
             WebkitAppRegion: 'no-drag' as any,
-          }}
+          } as any}
         >
           <div key={location.pathname} className="page-enter" style={{ flex: 1, minHeight: 0 }}>
             <Routes>

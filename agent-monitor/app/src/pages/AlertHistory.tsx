@@ -1,11 +1,10 @@
 import { useState } from 'react'
 import { useAlertsStore } from '@/store/alerts'
 import {
-  getMetricLabel,
   getAlertLevelLabel,
   getAlertLevelColor,
 } from '@/api/alerts'
-import type { AlertHistory, NotificationLog, AlertStatus, NotificationChannelType } from '@/shared/types'
+import type { AlertHistory, NotificationLog, NotificationChannelType } from '@/shared/types'
 
 export function AlertHistory() {
   const { history, clearHistory, logs, clearLogs } = useAlertsStore()
@@ -98,10 +97,6 @@ function AlertHistoryItem({ entry }: { entry: AlertHistory }) {
     resolved: '已恢复',
   }
 
-  // 兼容处理 - entry.metric 可能是字符串或对象
-  const metricStr = typeof entry.metric === 'string' ? entry.metric : 'custom'
-  const unit = typeof entry.metric === 'string' && entry.metric.includes('temp') ? '°C' : '%'
-
   return (
     <div
       className="alert-history-item"
@@ -137,9 +132,6 @@ function AlertHistoryItem({ entry }: { entry: AlertHistory }) {
             >
               [{getAlertLevelLabel(entry.level)}]
             </span>
-          </div>
-          <div style={{ color: '#ccc', fontSize: 14, marginBottom: 4 }}>
-            {/* 直接用 entry.message，它已经包含了完整的描述 */}
           </div>
           <div style={{ color: '#888', fontSize: 13 }}>
             {entry.message}

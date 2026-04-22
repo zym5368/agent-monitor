@@ -175,7 +175,7 @@ export class AlertEngine {
       ruleId: rule.id,
       serverId: alert.serverId,
       serverName: alert.serverName,
-      metric: rule.metric || 'custom',
+      metric: (rule.metric ?? 'cpu'),
       value: alert.value,
       threshold: alert.threshold,
       condition: alert.condition,

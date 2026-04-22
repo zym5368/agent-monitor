@@ -6,16 +6,10 @@ import type {
   ActiveAlert,
   AlertHistory,
   NotificationLog,
-  AlertLevel,
-  AlertStatus,
   AlertMetric,
-  AlertCondition,
 } from '@/shared/types'
 
 const STORAGE_KEY_RULES = 'cluster-alert-rules'
-const STORAGE_KEY_CHANNELS = 'cluster-notification-channels'
-const STORAGE_KEY_HISTORY = 'cluster-alert-history'
-const STORAGE_KEY_LOGS = 'cluster-notification-logs'
 
 function genId() {
   return Math.random().toString(36).slice(2) + Date.now().toString(36)
@@ -140,7 +134,7 @@ export const useAlertsStore = create<AlertsStore>()(
             ruleId: alert.ruleId,
             serverId: alert.serverId,
             serverName: alert.serverName,
-            metric: alert.metric,
+            metric: (typeof alert.metric === 'string' ? alert.metric : 'cpu') as AlertMetric,
             value: alert.value,
             threshold: alert.threshold,
             condition: alert.condition,
@@ -162,7 +156,7 @@ export const useAlertsStore = create<AlertsStore>()(
             ruleId: alert.ruleId,
             serverId: alert.serverId,
             serverName: alert.serverName,
-            metric: alert.metric,
+            metric: (typeof alert.metric === 'string' ? alert.metric : 'cpu') as AlertMetric,
             value: alert.value,
             threshold: alert.threshold,
             condition: alert.condition,

@@ -141,7 +141,7 @@ export function RuleForm({
   const [netdataDimensionLabel, setNetdataDimensionLabel] = useState(rule?.netdataMetric?.dimensionLabel ?? '')
   const [netdataUnits, setNetdataUnits] = useState(rule?.netdataMetric?.units ?? '')
 
-  const selectedServer = serverId ? servers.find((s) => s.id === serverId) : null
+  const selectedServer = serverId ? (servers.find((s) => s.id === serverId) ?? null) : null
   const isMobile = variant === 'mobile'
 
   const handleNetdataMetricChange = (

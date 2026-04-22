@@ -180,7 +180,7 @@ export function translateChartId(chartId: string): string {
     .replace(/\b\w/g, (c) => c.toUpperCase())
 }
 
-export function translateDimension(dimName: string, chartId?: string): string {
+export function translateDimension(dimName: string, _chartId?: string): string {
   const commonDims: Record<string, string> = {
     'used': '已用',
     'free': '空闲',
