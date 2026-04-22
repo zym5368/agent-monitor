@@ -24,30 +24,20 @@ function mountShortLabel(path: string): string {
   return last
 }
 
-function MetricStripItem({
+
+function MobileHwItem({
   label,
-  percent,
-  mainSuffix,
-  subValue,
+  value,
+  valueClass,
 }: {
   label: string
-  percent: number
-  mainSuffix?: string
-  subValue?: string
+  value: string
+  valueClass?: 'low' | 'mid' | 'high' | 'temp' | 'neutral'
 }) {
-  const pct = Math.min(100, Math.max(0, percent))
-  const colorClass = barColorClass(pct)
   return (
-    <div className="mobile-strip-item">
-      <div className="mobile-strip-label">{label}</div>
-      <div className="mobile-strip-main">
-        {pct.toFixed(1)}%
-        {mainSuffix != null && <span className="mobile-strip-suffix">{mainSuffix}</span>}
-      </div>
-      {subValue != null && <div className="mobile-strip-sub">{subValue}</div>}
-      <div className="mobile-strip-bar-outer">
-        <div className={`mobile-strip-bar-inner ${colorClass}`} style={{ width: `${pct}%` }} />
-      </div>
+    <div className="mobile-hw-item">
+      <span className="mobile-hw-label">{label}</span>
+      <span className={`mobile-hw-value ${valueClass ?? 'neutral'}`}>{value}</span>
     </div>
   )
 }
@@ -351,45 +341,53 @@ export function MobileDashboard() {
               </div>
             ) : (
               <>
-                <div className="mobile-strip">
-                  <MetricStripItem
-                    label="CPU"
-                    percent={m.cpu_percent}
-                    mainSuffix={m.cpu_temperature_c != null && !Number.isNaN(m.cpu_temperature_c)
-                      ? `${m.cpu_temperature_c.toFixed(0)}°C`
-                      : undefined}
-                  />
-                  <MetricStripItem
-                    label="内存"
-                    percent={m.memory_percent}
-                    subValue={`${formatBytes(m.memory_used_bytes)} / ${formatBytes(m.memory_total_bytes)}`}
-                  />
-                  <MetricStripItem
-                    label="磁盘"
-                    percent={m.disk_percent}
-                    subValue={`${formatBytes(m.disk_used_bytes)} / ${formatBytes(m.disk_total_bytes)}`}
-                  />
-                  {m.gpu != null && (
-                    <MetricStripItem
-                      label="GPU"
-                      percent={m.gpu.utilization_percent}
-                      mainSuffix={`${m.gpu.temperature_c.toFixed(0)}°C`}
-                      subValue={`显存 ${formatBytes(m.gpu.memory_used_bytes)} / ${formatBytes(m.gpu.memory_total_bytes)}`}
-                    />
-                  )}
+                <div className="mobile-hw-bar">
+                  <div className="mobile-hw-row">
+                    <MobileHwItem label="CPU" value={`${m.cpu_percent.toFixed(1)}%`} valueClass={barColorClass(m.cpu_percent)} />
+                    {m.cpu_temperature_c != null && !Number.isNaN(m.cpu_temperature_c) && (
+                      <MobileHwItem label="CPU-T" value={`${m.cpu_temperature_c.toFixed(0)}°C`} valueClass="temp" />
+                    )}
+                    <MobileHwItem label="MEM" value={`${m.memory_percent.toFixed(1)}%`} valueClass={barColorClass(m.memory_percent)} />
+                    <MobileHwItem label="DSK" value={`${m.disk_percent.toFixed(1)}%`} valueClass={barColorClass(m.disk_percent)} />
+                    {m.gpu != null && (
+                      <>
+                        <MobileHwItem label="GPU" value={`${m.gpu.utilization_percent.toFixed(1)}%`} valueClass={barColorClass(m.gpu.utilization_percent)} />
+                        <MobileHwItem label="GPU-T" value={`${m.gpu.temperature_c.toFixed(0)}°C`} valueClass="temp" />
+                      </>
+                    )}
+                  </div>
+                  <div className="mobile-hw-row">
+                    <MobileHwItem label="MEM" value={`${formatBytes(m.memory_used_bytes)}/${formatBytes(m.memory_total_bytes)}`} valueClass="neutral" />
+                    <MobileHwItem label="DSK" value={`${formatBytes(m.disk_used_bytes)}/${formatBytes(m.disk_total_bytes)}`} valueClass="neutral" />
+                    {m.gpu != null && (
+                      <MobileHwItem label="VRAM" value={`${formatBytes(m.gpu.memory_used_bytes)}/${formatBytes(m.gpu.memory_total_bytes)}`} valueClass="neutral" />
+                    )}
+                  </div>
                 </div>
                 {m.disk_mounts != null && m.disk_mounts.length > 0 && (
                   <div className="mobile-mounts">
                     <div className="mobile-mounts-label">挂载点明细</div>
-                    <div className="mobile-strip mobile-strip-scroll">
-                      {m.disk_mounts.map((mount) => (
-                        <MetricStripItem
-                          key={mount.path}
-                          label={mountShortLabel(mount.path)}
-                          percent={mount.used_percent}
-                          subValue={`${formatBytes(mount.used_bytes)} / ${formatBytes(mount.total_bytes)}`}
-                        />
-                      ))}
+                    <div className="mobile-hw-bar">
+                      <div className="mobile-hw-row">
+                        {m.disk_mounts.map((mount) => (
+                          <MobileHwItem
+                            key={mount.path}
+                            label={mountShortLabel(mount.path)}
+                            value={`${mount.used_percent.toFixed(1)}%`}
+                            valueClass={barColorClass(mount.used_percent)}
+                          />
+                        ))}
+                      </div>
+                      <div className="mobile-hw-row">
+                        {m.disk_mounts.map((mount) => (
+                          <MobileHwItem
+                            key={mount.path + '_sz'}
+                            label={mountShortLabel(mount.path)}
+                            value={`${formatBytes(mount.used_bytes)}/${formatBytes(mount.total_bytes)}`}
+                            valueClass="neutral"
+                          />
+                        ))}
+                      </div>
                     </div>
                   </div>
                 )}

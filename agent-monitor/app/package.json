@@ -20,7 +20,7 @@
   },
   "build": {
     "appId": "com.cluster-manager.app",
-    "productName": "集群管理",
+    "productName": "AgentMonitor",
     "directories": {
       "output": "electron-dist"
     },
@@ -30,6 +30,7 @@
     ],
     "win": {
       "icon": "build/app.ico",
+      "executableName": "cmagent",
       "target": [
         {
           "target": "portable",
@@ -47,7 +48,8 @@
       "signAndEditExecutable": false
     },
     "nsis": {
-      "include": "build/installer.nsh"
+      "include": "build/installer.nsh",
+      "artifactName": "agent-monitor-installer-${version}.${ext}"
     }
   },
   "dependencies": {
