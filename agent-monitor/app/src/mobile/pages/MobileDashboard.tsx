@@ -292,7 +292,7 @@ export function MobileDashboard() {
         return (
           <div
             key={s.id}
-            className="mobile-card"
+            className="mobile-card mobile-dashboard-card"
             style={{
               borderColor: hasAlert
                 ? (highestLevel === 'critical' ? '#ef4444' : '#f59e0b')
@@ -300,29 +300,29 @@ export function MobileDashboard() {
             }}
           >
             <div className="mobile-card-header">
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 <div
                   style={{
-                    width: 40,
-                    height: 40,
-                    borderRadius: 10,
+                    width: 34,
+                    height: 34,
+                    borderRadius: 9,
                     background: m ? 'rgba(34, 197, 94, 0.15)' : 'rgba(100, 116, 139, 0.2)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                   }}
                 >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={m ? '#22c55e' : '#64748b'} strokeWidth="2">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke={m ? '#22c55e' : '#64748b'} strokeWidth="2">
                     <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
                     <line x1="8" y1="21" x2="16" y2="21" />
                     <line x1="12" y1="17" x2="12" y2="21" />
                   </svg>
                 </div>
                 <div>
-                  <h3 style={{ margin: 0, fontSize: 16, fontWeight: 600, color: '#f8fafc' }}>
+                  <h3 style={{ margin: 0, fontSize: 15, fontWeight: 600, color: '#f8fafc', lineHeight: 1.15 }}>
                     {s.name}
                   </h3>
-                  <p style={{ margin: '2px 0 0', color: '#64748b', fontSize: 12 }}>
+                  <p style={{ margin: '1px 0 0', color: '#64748b', fontSize: 11 }}>
                     {s.host}:{s.port}
                   </p>
                 </div>
