@@ -45,6 +45,9 @@
         }
       ],
       "signAndEditExecutable": false
+    },
+    "nsis": {
+      "include": "build/installer.nsh"
     }
   },
   "dependencies": {
