@@ -446,8 +446,8 @@ export function Dashboard() {
 
       <div className="dashboard-server-cards-grid" style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-        gap: 20,
+        gridTemplateColumns: '1fr',
+        gap: 12,
       }}>
         {servers.map((s) => {
           const m = metrics[s.id]
@@ -466,8 +466,8 @@ export function Dashboard() {
               key={s.id}
               style={{
                 background: 'linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95))',
-                borderRadius: 16,
-                padding: 24,
+                borderRadius: 12,
+                padding: 14,
                 border: `2px solid ${hasAlert ? (highestLevel === 'critical' ? '#ef4444' : '#f59e0b') : 'rgba(71, 85, 105, 0.3)'}`,
                 backdropFilter: 'blur(20px)',
                 position: 'relative',
@@ -475,10 +475,10 @@ export function Dashboard() {
                 transition: 'all 0.3s ease',
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-4px)'
+                e.currentTarget.style.transform = 'translateY(-2px)'
                 e.currentTarget.style.boxShadow = hasAlert
-                  ? `0 20px 40px ${highestLevel === 'critical' ? 'rgba(239, 68, 68, 0.2)' : 'rgba(245, 158, 11, 0.2)'}`
-                  : '0 20px 40px rgba(0, 0, 0, 0.3)'
+                  ? `0 12px 24px ${highestLevel === 'critical' ? 'rgba(239, 68, 68, 0.2)' : 'rgba(245, 158, 11, 0.2)'}`
+                  : '0 12px 24px rgba(0, 0, 0, 0.3)'
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = 'translateY(0)'
@@ -503,31 +503,31 @@ export function Dashboard() {
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'flex-start',
-                marginBottom: 20,
-                paddingBottom: 16,
+                marginBottom: 12,
+                paddingBottom: 10,
                 borderBottom: '1px solid rgba(71, 85, 105, 0.3)',
               }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                   <div style={{
-                    width: 44,
-                    height: 44,
-                    borderRadius: 12,
+                    width: 36,
+                    height: 36,
+                    borderRadius: 10,
                     background: m ? 'rgba(34, 197, 94, 0.15)' : 'rgba(100, 116, 139, 0.2)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                   }}>
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={m ? '#22c55e' : '#64748b'} strokeWidth="2">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={m ? '#22c55e' : '#64748b'} strokeWidth="2">
                       <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
                       <line x1="8" y1="21" x2="16" y2="21" />
                       <line x1="12" y1="17" x2="12" y2="21" />
                     </svg>
                   </div>
                   <div>
-                    <h3 style={{ margin: 0, fontSize: 18, fontWeight: 600, color: '#f8fafc' }}>
+                    <h3 style={{ margin: 0, fontSize: 16, fontWeight: 600, color: '#f8fafc', lineHeight: 1.15 }}>
                       {s.name}
                     </h3>
-                    <p style={{ margin: '2px 0 0', color: '#64748b', fontSize: 13 }}>
+                    <p style={{ margin: '1px 0 0', color: '#64748b', fontSize: 12 }}>
                       {s.host}:{s.port}
                     </p>
                   </div>
@@ -535,8 +535,8 @@ export function Dashboard() {
                 {hasAlert && (
                   <span
                     style={{
-                      fontSize: 12,
-                      padding: '4px 10px',
+                      fontSize: 11,
+                      padding: '3px 8px',
                       borderRadius: 20,
                       background: highestLevel === 'critical' ? 'rgba(239, 68, 68, 0.15)' : 'rgba(245, 158, 11, 0.15)',
                       color: highestLevel === 'critical' ? '#f87171' : '#fbbf24',
