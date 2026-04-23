@@ -781,13 +781,14 @@ html, body {
   flex-direction: column;
   gap: 2px;
   background: rgba(8, 14, 28, 0.68);
-  border-radius: 6px;
-  padding: 5px 8px;
+  border-radius: 8px;
+  padding: 15px 12px;
   border: 1px solid rgba(71, 85, 105, 0.22);
 }
 
+/* 与桌面 .hw-bar 一致，不在 dashboard 卡片内再缩小 padding */
 .mobile-dashboard-card .mobile-hw-bar {
-  padding: 6px 8px;
+  padding: 15px 12px;
 }
 
 .mobile-hw-row {
@@ -822,8 +823,8 @@ html, body {
 }
 
 .mobile-hw-label {
-  font-size: 10px;
-  color: var(--color-text-muted);
+  font-size: 20px;
+  color: #fff;
   text-transform: uppercase;
   letter-spacing: 0.35px;
   font-weight: 500;
@@ -831,18 +832,19 @@ html, body {
 }
 
 .mobile-dashboard-card .mobile-hw-label {
-  font-size: 10px;
+  font-size: 20px;
+  color: #fff;
 }
 
 .mobile-hw-value {
-  font-size: 15px;
+  font-size: 20px;
   font-weight: 700;
   line-height: 1.1;
   font-variant-numeric: tabular-nums;
 }
 
 .mobile-dashboard-card .mobile-hw-value {
-  font-size: 15px;
+  font-size: 20px;
 }
 
 .mobile-hw-value.low    { color: #4ade80; }
