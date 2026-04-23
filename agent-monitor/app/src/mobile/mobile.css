@@ -787,7 +787,7 @@ html, body {
 }
 
 .mobile-dashboard-card .mobile-hw-bar {
-  padding: 4px 6px;
+  padding: 6px 8px;
 }
 
 .mobile-hw-row {
@@ -801,7 +801,7 @@ html, body {
 }
 
 .mobile-dashboard-card .mobile-hw-row {
-  gap: 6px;
+  gap: 8px;
 }
 
 .mobile-hw-row::-webkit-scrollbar {
@@ -818,31 +818,31 @@ html, body {
 }
 
 .mobile-dashboard-card .mobile-hw-item {
-  gap: 3px;
+  gap: 4px;
 }
 
 .mobile-hw-label {
-  font-size: 9px;
+  font-size: 10px;
   color: var(--color-text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.4px;
+  letter-spacing: 0.35px;
   font-weight: 500;
-  line-height: 1;
+  line-height: 1.1;
 }
 
 .mobile-dashboard-card .mobile-hw-label {
-  font-size: 8px;
+  font-size: 10px;
 }
 
 .mobile-hw-value {
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 700;
-  line-height: 1;
+  line-height: 1.1;
   font-variant-numeric: tabular-nums;
 }
 
 .mobile-dashboard-card .mobile-hw-value {
-  font-size: 12px;
+  font-size: 15px;
 }
 
 .mobile-hw-value.low    { color: #4ade80; }

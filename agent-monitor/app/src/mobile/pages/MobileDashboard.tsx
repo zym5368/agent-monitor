@@ -319,10 +319,10 @@ export function MobileDashboard() {
                   </svg>
                 </div>
                 <div>
-                  <h3 style={{ margin: 0, fontSize: 15, fontWeight: 600, color: '#f8fafc', lineHeight: 1.15 }}>
+                  <h3 style={{ margin: 0, fontSize: 16, fontWeight: 600, color: '#f8fafc', lineHeight: 1.15 }}>
                     {s.name}
                   </h3>
-                  <p style={{ margin: '1px 0 0', color: '#64748b', fontSize: 11 }}>
+                  <p style={{ margin: '1px 0 0', color: '#64748b', fontSize: 12 }}>
                     {s.host}:{s.port}
                   </p>
                 </div>

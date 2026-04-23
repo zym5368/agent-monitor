@@ -583,7 +583,7 @@ input[type="search"] {
 }
 
 .dashboard-mounts-label {
-  font-size: 11px;
+  font-size: 12px;
   color: #94a3b8;
   margin-bottom: 8px;
   text-transform: uppercase;
@@ -597,8 +597,8 @@ input[type="search"] {
   flex-direction: column;
   gap: 2px;
   background: rgba(8, 14, 28, 0.68);
-  border-radius: 6px;
-  padding: 5px 8px;
+  border-radius: 8px;
+  padding: 8px 12px;
   border: 1px solid rgba(71, 85, 105, 0.22);
 }
 
@@ -610,10 +610,18 @@ input[type="search"] {
 .hw-row {
   display: flex;
   flex-wrap: nowrap;
-  gap: 10px;
+  gap: 12px;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   align-items: baseline;
+}
+
+/* 桌面端宽屏：单行内自动换行，不再强制横向滚动 */
+.hw-row.hw-row-wrap {
+  flex-wrap: wrap;
+  overflow-x: visible;
+  row-gap: 10px;
+  column-gap: 14px;
 }
 
 .hw-row::-webkit-scrollbar {
@@ -623,24 +631,24 @@ input[type="search"] {
 .hw-item {
   display: inline-flex;
   align-items: baseline;
-  gap: 5px;
+  gap: 6px;
   white-space: nowrap;
   flex-shrink: 0;
 }
 
 .hw-label {
-  font-size: 10px;
+  font-size: 12px;
   color: #64748b;
   text-transform: uppercase;
-  letter-spacing: 0.4px;
+  letter-spacing: 0.35px;
   font-weight: 500;
-  line-height: 1;
+  line-height: 1.1;
 }
 
 .hw-value {
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
-  line-height: 1;
+  line-height: 1.1;
   font-variant-numeric: tabular-nums;
 }
 

@@ -524,10 +524,10 @@ export function Dashboard() {
                     </svg>
                   </div>
                   <div>
-                    <h3 style={{ margin: 0, fontSize: 16, fontWeight: 600, color: '#f8fafc', lineHeight: 1.15 }}>
+                    <h3 style={{ margin: 0, fontSize: 17, fontWeight: 600, color: '#f8fafc', lineHeight: 1.15 }}>
                       {s.name}
                     </h3>
-                    <p style={{ margin: '1px 0 0', color: '#64748b', fontSize: 12 }}>
+                    <p style={{ margin: '1px 0 0', color: '#64748b', fontSize: 13 }}>
                       {s.host}:{s.port}
                     </p>
                   </div>
@@ -582,7 +582,7 @@ export function Dashboard() {
               ) : (
                 <>
                   <div className="hw-bar">
-                    <div className="hw-row">
+                    <div className="hw-row hw-row-wrap">
                       <HwItem label="CPU" value={`${m.cpu_percent.toFixed(1)}%`} valueClass={barColorClass(m.cpu_percent)} />
                       {m.cpu_temperature_c != null && !Number.isNaN(m.cpu_temperature_c) && (
                         <HwItem label="CPU-T" value={`${m.cpu_temperature_c.toFixed(0)}°C`} valueClass="temp" />
@@ -595,8 +595,6 @@ export function Dashboard() {
                           <HwItem label="GPU-T" value={`${m.gpu.temperature_c.toFixed(0)}°C`} valueClass="temp" />
                         </>
                       )}
-                    </div>
-                    <div className="hw-row">
                       <HwItem label="MEM" value={`${formatBytes(m.memory_used_bytes)}/${formatBytes(m.memory_total_bytes)}`} valueClass="neutral" />
                       <HwItem label="DSK" value={`${formatBytes(m.disk_used_bytes)}/${formatBytes(m.disk_total_bytes)}`} valueClass="neutral" />
                       {m.gpu != null && (
@@ -608,7 +606,7 @@ export function Dashboard() {
                     <div className="dashboard-mounts">
                       <div className="dashboard-mounts-label">挂载点明细</div>
                       <div className="hw-bar hw-bar-mounts">
-                        <div className="hw-row">
+                        <div className="hw-row hw-row-wrap">
                           {m.disk_mounts.map((mount) => (
                             <HwItem
                               key={mount.path}
@@ -617,8 +615,6 @@ export function Dashboard() {
                               valueClass={barColorClass(mount.used_percent)}
                             />
                           ))}
-                        </div>
-                        <div className="hw-row">
                           {m.disk_mounts.map((mount) => (
                             <HwItem
                               key={mount.path + '_sz'}
