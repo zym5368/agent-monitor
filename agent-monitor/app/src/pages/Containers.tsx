@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo, type CSSProperties } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import { useServersStore } from '@/store/servers'
 import {
   fetchContainers,
@@ -15,42 +15,10 @@ import type { Server, ContainerInfo, DockerOverview, DockerImageInfo } from '@/s
 
 function getStateColor(state: string): string {
   const s = state.toLowerCase()
-  if (s === 'running') return '#22c55e'
-  if (s === 'exited') return '#64748b'
-  if (s === 'paused') return '#f59e0b'
-  return '#94a3b8'
-}
-
-const unifiedSelectStyle = {
-  width: '100%',
-  boxSizing: 'border-box' as const,
-  padding: '10px 14px',
-  lineHeight: 1.4,
-  background: '#0f172a',
-  border: '1px solid #334155',
-  borderRadius: 10,
-  color: '#f8fafc',
-  fontSize: 14,
-}
-
-const summaryCardStyle: CSSProperties = {
-  background: 'linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95))',
-  borderRadius: 10,
-  border: '1px solid rgba(71, 85, 105, 0.35)',
-  padding: '12px 14px',
-}
-
-const summaryLabelStyle: CSSProperties = {
-  margin: 0,
-  fontSize: 12,
-  color: '#94a3b8',
-}
-
-const summaryValueStyle: CSSProperties = {
-  margin: '6px 0 0',
-  fontSize: 22,
-  color: '#f8fafc',
-  fontWeight: 700,
+  if (s === 'running') return 'var(--color-success)'
+  if (s === 'exited') return 'var(--color-ink-subtle)'
+  if (s === 'paused') return 'var(--color-warning)'
+  return 'var(--color-ink-muted)'
 }
 
 function CustomSelect({
@@ -83,8 +51,8 @@ function CustomSelect({
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
+        className="select"
         style={{
-          ...unifiedSelectStyle,
           paddingRight: 40,
           textAlign: 'left',
           cursor: 'pointer',
@@ -98,7 +66,7 @@ function CustomSelect({
           right: 12,
           top: '50%',
           transform: `translateY(-50%) rotate(${open ? 180 : 0}deg)`,
-          color: '#94a3b8',
+          color: 'var(--color-ink-subtle)',
           pointerEvents: 'none',
           transition: 'transform 0.18s ease',
           fontSize: 12,
@@ -108,16 +76,16 @@ function CustomSelect({
       </span>
       {open && (
         <div
+          className="custom-select-dropdown open"
           style={{
             position: 'absolute',
             top: 'calc(100% + 8px)',
             left: 0,
             right: 0,
             zIndex: 1200,
-            borderRadius: 10,
-            border: '1px solid #334155',
-            background: '#0f172a',
-            boxShadow: '0 12px 24px rgba(0, 0, 0, 0.45)',
+            borderRadius: 'var(--radius-md)',
+            border: '1px solid var(--color-hairline)',
+            background: 'var(--color-surface-1)',
             overflow: 'hidden',
           }}
         >
@@ -136,8 +104,8 @@ function CustomSelect({
                 padding: '10px 12px',
                 lineHeight: 1.4,
                 fontSize: 14,
-                color: '#f8fafc',
-                background: opt.value === value ? 'rgba(59, 130, 246, 0.55)' : 'transparent',
+                color: 'var(--color-ink)',
+                background: opt.value === value ? 'rgba(94, 106, 210, 0.3)' : 'transparent',
                 cursor: 'pointer',
               }}
             >
@@ -187,26 +155,10 @@ function ContainerCard({
   }
 
   const isRunning = container.state.toLowerCase() === 'running'
+  const stateColor = getStateColor(container.state)
 
   return (
-    <div
-      style={{
-        background: 'linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95))',
-        borderRadius: 12,
-        padding: 20,
-        border: '1px solid rgba(71, 85, 105, 0.4)',
-        backdropFilter: 'blur(20px)',
-        transition: 'all 0.3s ease',
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.transform = 'translateY(-2px)'
-        e.currentTarget.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.3)'
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.transform = 'translateY(0)'
-        e.currentTarget.style.boxShadow = 'none'
-      }}
-    >
+    <div className="card">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
         <div style={{ flex: 1 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
@@ -214,18 +166,18 @@ function ContainerCard({
               width: 8,
               height: 8,
               borderRadius: '50%',
-              background: getStateColor(container.state),
+              background: stateColor,
               display: 'inline-block',
             }} />
-            <h3 style={{ margin: 0, fontSize: 16, fontWeight: 600, color: '#f8fafc' }}>
+            <h3 style={{ margin: 0, fontSize: 16, fontWeight: 600, color: 'var(--color-ink)' }}>
               {container.name}
             </h3>
             <span style={{
               fontSize: 11,
               padding: '3px 8px',
               borderRadius: 20,
-              background: getStateColor(container.state) + '20',
-              color: getStateColor(container.state),
+              background: stateColor + '20',
+              color: stateColor,
               fontWeight: 600,
               textTransform: 'uppercase',
               letterSpacing: '0.5px',
@@ -233,17 +185,15 @@ function ContainerCard({
               {container.state}
             </span>
           </div>
-          <p style={{ margin: '4px 0 0', color: '#94a3b8', fontSize: 13 }}>
+          <p style={{ margin: '4px 0 0', color: 'var(--color-ink-subtle)', fontSize: 13 }}>
             {container.image}
           </p>
-          <p
-            style={{
-              margin: '6px 0 0',
-              color: container.ports.length > 0 ? '#64748b' : 'transparent',
-              fontSize: 12,
-              minHeight: 18,
-            }}
-          >
+          <p style={{
+            margin: '6px 0 0',
+            color: container.ports.length > 0 ? 'var(--color-ink-tertiary)' : 'transparent',
+            fontSize: 12,
+            minHeight: 18,
+          }}>
             {container.ports.length > 0 ? `端口: ${container.ports.join(', ')}` : '端口: -'}
           </p>
         </div>
@@ -253,17 +203,7 @@ function ContainerCard({
           <button
             onClick={() => handleAction('start', container.id)}
             disabled={loading !== null}
-            style={{
-              padding: '8px 14px',
-              background: 'linear-gradient(135deg, #22c55e, #16a34a)',
-              border: 'none',
-              borderRadius: 8,
-              color: '#fff',
-              cursor: loading === 'start' ? 'wait' : 'pointer',
-              fontSize: 13,
-              fontWeight: 500,
-              opacity: loading === 'start' ? 0.7 : 1,
-            }}
+            className="btn btn-success"
           >
             {loading === 'start' ? '启动中...' : '启动'}
           </button>
@@ -272,17 +212,7 @@ function ContainerCard({
           <button
             onClick={() => handleAction('stop', container.id)}
             disabled={loading !== null}
-            style={{
-              padding: '8px 14px',
-              background: 'rgba(239, 68, 68, 0.2)',
-              border: '1px solid rgba(239, 68, 68, 0.4)',
-              borderRadius: 8,
-              color: '#fca5a5',
-              cursor: loading === 'stop' ? 'wait' : 'pointer',
-              fontSize: 13,
-              fontWeight: 500,
-              opacity: loading === 'stop' ? 0.7 : 1,
-            }}
+            className="btn btn-danger"
           >
             {loading === 'stop' ? '停止中...' : '停止'}
           </button>
@@ -290,49 +220,21 @@ function ContainerCard({
         <button
           onClick={() => handleAction('restart', container.id)}
           disabled={loading !== null}
-          style={{
-            padding: '8px 14px',
-            background: 'rgba(99, 102, 241, 0.2)',
-            border: '1px solid rgba(99, 102, 241, 0.4)',
-            borderRadius: 8,
-            color: '#a5b4fc',
-            cursor: loading === 'restart' ? 'wait' : 'pointer',
-            fontSize: 13,
-            fontWeight: 500,
-            opacity: loading === 'restart' ? 0.7 : 1,
-          }}
+          className="btn btn-secondary"
         >
           {loading === 'restart' ? '重启中...' : '重启'}
         </button>
         <button
           onClick={() => onViewLogs(container.id)}
-          style={{
-            padding: '8px 14px',
-            background: 'rgba(71, 85, 105, 0.3)',
-            border: '1px solid rgba(71, 85, 105, 0.5)',
-            borderRadius: 8,
-            color: '#cbd5e1',
-            cursor: 'pointer',
-            fontSize: 13,
-            fontWeight: 500,
-          }}
+          className="btn btn-ghost"
         >
           日志
         </button>
         <button
           onClick={() => handleAction('remove', container.id)}
           disabled={loading !== null}
-          style={{
-            padding: '8px 14px',
-            background: 'transparent',
-            border: '1px solid rgba(239, 68, 68, 0.4)',
-            borderRadius: 8,
-            color: '#fca5a5',
-            cursor: loading === 'remove' ? 'wait' : 'pointer',
-            fontSize: 13,
-            fontWeight: 500,
-            opacity: loading === 'remove' ? 0.7 : 1,
-          }}
+          className="btn btn-ghost"
+          style={{ color: 'var(--color-danger)' }}
         >
           {loading === 'remove' ? '删除中...' : '删除'}
         </button>
@@ -366,37 +268,20 @@ function LogsViewer({
   }
 
   return (
-    <div style={{
-      position: 'fixed',
-      inset: 0,
-      background: 'rgba(0, 0, 0, 0.8)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      zIndex: 1000,
-      padding: 20,
-    }}>
-      <div style={{
-        background: '#1e293b',
-        borderRadius: 16,
-        width: '100%',
-        maxWidth: 900,
-        maxHeight: '80vh',
-        display: 'flex',
-        flexDirection: 'column',
-        border: '1px solid rgba(71, 85, 105, 0.5)',
-      }}>
+    <div className="modal-overlay">
+      <div className="modal-content" style={{ maxWidth: 900 }}>
         <div style={{
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          padding: '16px 20px',
-          borderBottom: '1px solid rgba(71, 85, 105, 0.3)',
+          paddingBottom: 'var(--space-md)',
+          borderBottom: '1px solid var(--color-hairline)',
+          marginBottom: 'var(--space-md)',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-            <h2 style={{ margin: 0, fontSize: 18, color: '#f8fafc' }}>容器日志</h2>
+            <h2 style={{ margin: 0, fontSize: 18, color: 'var(--color-ink)' }}>容器日志</h2>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <label style={{ color: '#94a3b8', fontSize: 13 }}>显示行数:</label>
+              <label style={{ color: 'var(--color-ink-subtle)', fontSize: 13 }}>显示行数:</label>
               <CustomSelect
                 value={tail}
                 onChange={setTail}
@@ -411,15 +296,7 @@ function LogsViewer({
               />
               <button
                 onClick={loadLogs}
-                style={{
-                  background: '#334155',
-                  border: '1px solid #475569',
-                  borderRadius: 6,
-                  padding: '6px 12px',
-                  color: '#cbd5e1',
-                  cursor: 'pointer',
-                  fontSize: 13,
-                }}
+                className="btn btn-secondary"
               >
                 刷新
               </button>
@@ -430,7 +307,7 @@ function LogsViewer({
             style={{
               background: 'transparent',
               border: 'none',
-              color: '#94a3b8',
+              color: 'var(--color-ink-subtle)',
               fontSize: 24,
               cursor: 'pointer',
               lineHeight: 1,
@@ -439,19 +316,15 @@ function LogsViewer({
             ×
           </button>
         </div>
-        <div style={{
-          flex: 1,
-          overflow: 'auto',
-          padding: 20,
-        }}>
+        <div style={{ flex: 1, overflow: 'auto' }}>
           {loading ? (
-            <p style={{ color: '#64748b' }}>加载中...</p>
+            <p style={{ color: 'var(--color-ink-subtle)' }}>加载中...</p>
           ) : (
             <pre style={{
               margin: 0,
               whiteSpace: 'pre-wrap',
               wordBreak: 'break-all',
-              color: '#e2e8f0',
+              color: 'var(--color-ink)',
               fontSize: 12,
               fontFamily: 'Consolas, Monaco, "Courier New", monospace',
               lineHeight: 1.6,
@@ -539,38 +412,16 @@ export function Containers() {
   const portSummary = overview?.port_summary ?? []
 
   return (
-    <div className="containers-page" style={{ paddingBottom: 40 }}>
-      <div style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: 24,
-        paddingBottom: 20,
-        borderBottom: '1px solid rgba(71, 85, 105, 0.3)',
-      }}>
+    <div style={{ paddingBottom: 40 }}>
+      <div className="page-header">
         <div>
-          <h1 style={{
-            margin: 0,
-            fontSize: 28,
-            fontWeight: 700,
-            background: 'linear-gradient(135deg, #f8fafc, #94a3b8)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-          }}>
-            容器管理
-          </h1>
-          <p style={{ margin: '8px 0 0', color: '#64748b', fontSize: 14 }}>
-            管理 Docker 容器
-          </p>
+          <h1 className="page-title">容器管理</h1>
+          <p className="page-subtitle">管理 Docker 容器</p>
         </div>
       </div>
 
       {servers.length === 0 ? (
-        <div style={{
-          textAlign: 'center',
-          padding: '80px 20px',
-          color: '#64748b',
-        }}>
+        <div className="empty-state">
           <h3 style={{ margin: '0 0 8px', fontSize: 18, color: '#94a3b8' }}>还没有添加服务器</h3>
           <p style={{ margin: 0, fontSize: 14 }}>请先在「服务器」页面中添加服务器</p>
         </div>
@@ -578,7 +429,7 @@ export function Containers() {
         <>
           <div style={{ display: 'flex', gap: 12, marginBottom: 20, flexWrap: 'wrap' }}>
             <div style={{ minWidth: 200 }}>
-              <label style={{ display: 'block', marginBottom: 6, color: '#94a3b8', fontSize: 13 }}>选择服务器</label>
+              <label style={{ display: 'block', marginBottom: 6, color: 'var(--color-ink-subtle)', fontSize: 13 }}>选择服务器</label>
               <CustomSelect
                 value={selectedServerId || ''}
                 onChange={(v) => setSelectedServerId(v)}
@@ -586,7 +437,7 @@ export function Containers() {
               />
             </div>
             <div style={{ minWidth: 150 }}>
-              <label style={{ display: 'block', marginBottom: 6, color: '#94a3b8', fontSize: 13 }}>筛选</label>
+              <label style={{ display: 'block', marginBottom: 6, color: 'var(--color-ink-subtle)', fontSize: 13 }}>筛选</label>
               <CustomSelect
                 value={filter}
                 onChange={(v) => setFilter(v as 'all' | 'running' | 'stopped')}
@@ -601,17 +452,7 @@ export function Containers() {
               <button
                 onClick={loadContainers}
                 disabled={loading}
-                style={{
-                  padding: '10px 18px',
-                  background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
-                  border: 'none',
-                  borderRadius: 10,
-                  color: '#fff',
-                  cursor: loading ? 'wait' : 'pointer',
-                  fontSize: 14,
-                  fontWeight: 600,
-                  opacity: loading ? 0.7 : 1,
-                }}
+                className="btn btn-primary"
               >
                 {loading ? '刷新中...' : '刷新'}
               </button>
@@ -620,17 +461,7 @@ export function Containers() {
               <button
                 onClick={loadImages}
                 disabled={imagesLoading}
-                style={{
-                  padding: '10px 18px',
-                  background: 'rgba(30, 41, 59, 0.8)',
-                  border: '1px solid rgba(71, 85, 105, 0.45)',
-                  borderRadius: 10,
-                  color: '#cbd5e1',
-                  cursor: imagesLoading ? 'wait' : 'pointer',
-                  fontSize: 14,
-                  fontWeight: 600,
-                  opacity: imagesLoading ? 0.7 : 1,
-                }}
+                className="btn btn-secondary"
               >
                 {imagesLoading ? '镜像刷新中...' : '刷新镜像'}
               </button>
@@ -638,34 +469,33 @@ export function Containers() {
           </div>
 
           <div
-            className="containers-summary-grid"
             style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-              gap: 8,
-              marginBottom: 10,
+              gap: 'var(--space-sm)',
+              marginBottom: 'var(--space-sm)',
             }}
           >
-            <div style={summaryCardStyle}>
-              <p style={summaryLabelStyle}>容器概览</p>
+            <div className="card">
+              <p style={{ margin: 0, fontSize: 12, color: 'var(--color-ink-subtle)' }}>容器概览</p>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginTop: 6, flexWrap: 'wrap' }}>
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
-                  <span style={{ color: '#94a3b8', fontSize: 13 }}>总数</span>
-                  <span style={{ ...summaryValueStyle, margin: 0 }}>{containersTotal}</span>
+                  <span style={{ color: 'var(--color-ink-subtle)', fontSize: 13 }}>总数</span>
+                  <span style={{ fontSize: 22, fontWeight: 700, color: 'var(--color-ink)', margin: 0 }}>{containersTotal}</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
-                  <span style={{ color: '#94a3b8', fontSize: 13 }}>运行中</span>
-                  <span style={{ ...summaryValueStyle, margin: 0 }}>{runningTotal}</span>
+                  <span style={{ color: 'var(--color-ink-subtle)', fontSize: 13 }}>运行中</span>
+                  <span style={{ fontSize: 22, fontWeight: 700, color: 'var(--color-ink)', margin: 0 }}>{runningTotal}</span>
                 </div>
               </div>
             </div>
-            <div style={summaryCardStyle}>
-              <p style={summaryLabelStyle}>镜像总数</p>
-              <p style={summaryValueStyle}>{imagesTotal}</p>
+            <div className="card">
+              <p style={{ margin: 0, fontSize: 12, color: 'var(--color-ink-subtle)' }}>镜像总数</p>
+              <p style={{ margin: '6px 0 0', fontSize: 22, fontWeight: 700, color: 'var(--color-ink)' }}>{imagesTotal}</p>
             </div>
-            <div style={summaryCardStyle}>
-              <p style={summaryLabelStyle}>镜像总容量</p>
-              <p style={{ ...summaryValueStyle, fontSize: 20 }}>{formatBytes(imageTotalBytes)}</p>
+            <div className="card">
+              <p style={{ margin: 0, fontSize: 12, color: 'var(--color-ink-subtle)' }}>镜像总容量</p>
+              <p style={{ margin: '6px 0 0', fontSize: 20, fontWeight: 700, color: 'var(--color-ink)' }}>{formatBytes(imageTotalBytes)}</p>
             </div>
           </div>
 
@@ -679,18 +509,7 @@ export function Containers() {
               alignItems: 'stretch',
             }}
           >
-            <div
-              style={{
-                background: 'linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95))',
-                borderRadius: 12,
-                border: '1px solid rgba(71, 85, 105, 0.4)',
-                padding: 14,
-                minHeight: 340,
-                height: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-              }}
-            >
+            <div className="card" style={{ padding: 14, minHeight: 340 }}>
               <details open style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 }}>
                 <summary style={{ color: '#f8fafc', cursor: 'pointer', fontSize: 15, fontWeight: 600 }}>
                   端口占用汇总（共 {portSummary.length} 项，点击展开）
@@ -699,7 +518,7 @@ export function Containers() {
                   {portSummary.length === 0 ? (
                     <div style={{ color: '#64748b', fontSize: 13 }}>无端口占用数据</div>
                   ) : (
-                    <div style={{ flex: 1, minHeight: 0, overflow: 'auto' }}>
+                    <div style={{ flex: 1, minHeight: 0, overflow: 'auto', maxHeight: 260 }}>
                       <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
                         <thead>
                           <tr style={{ color: '#94a3b8', borderBottom: '1px solid rgba(71, 85, 105, 0.35)' }}>
@@ -726,18 +545,7 @@ export function Containers() {
               </details>
             </div>
 
-            <div
-              style={{
-                background: 'linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95))',
-                borderRadius: 12,
-                border: '1px solid rgba(71, 85, 105, 0.4)',
-                padding: 14,
-                minHeight: 340,
-                height: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-              }}
-            >
+            <div className="card" style={{ padding: 14, minHeight: 340 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
                 <h3 style={{ margin: 0, color: '#f8fafc', fontSize: 16 }}>镜像管理</h3>
                 <span style={{ color: '#94a3b8', fontSize: 12 }}>共 {images.length} 个镜像</span>
@@ -747,7 +555,7 @@ export function Containers() {
               ) : images.length === 0 ? (
                 <div style={{ color: '#64748b', fontSize: 13 }}>暂无镜像</div>
               ) : (
-                <div style={{ flex: 1, minHeight: 0, overflow: 'auto' }}>
+                <div style={{ flex: 1, minHeight: 0, overflow: 'auto', maxHeight: 260 }}>
                   <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
                     <thead>
                       <tr style={{ color: '#94a3b8', borderBottom: '1px solid rgba(71, 85, 105, 0.35)' }}>
@@ -771,16 +579,8 @@ export function Containers() {
                               <button
                                 onClick={() => handleRemoveImage(ref)}
                                 disabled={imageRemoving === ref}
-                                style={{
-                                  padding: '4px 10px',
-                                  borderRadius: 6,
-                                  border: '1px solid rgba(239, 68, 68, 0.35)',
-                                  background: 'rgba(239, 68, 68, 0.14)',
-                                  color: '#f87171',
-                                  cursor: imageRemoving === ref ? 'wait' : 'pointer',
-                                  opacity: imageRemoving === ref ? 0.7 : 1,
-                                  fontSize: 12,
-                                }}
+                                className="btn btn-danger"
+                                style={{ fontSize: 12, padding: '4px 10px' }}
                               >
                                 {imageRemoving === ref ? '删除中...' : '删除镜像'}
                               </button>
