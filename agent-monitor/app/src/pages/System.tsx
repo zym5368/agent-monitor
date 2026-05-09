@@ -252,13 +252,7 @@ function InfoCard({
   subValue?: string
 }) {
   return (
-    <div style={{
-      background: 'linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95))',
-      borderRadius: 12,
-      padding: 18,
-      border: '1px solid rgba(71, 85, 105, 0.4)',
-      backdropFilter: 'blur(20px)',
-    }}>
+    <div className="card">
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
         <div style={{
           width: 40,
@@ -402,37 +396,15 @@ export function System() {
 
   return (
     <div className="system-page" style={{ paddingBottom: 40 }}>
-      <div style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: 24,
-        paddingBottom: 20,
-        borderBottom: '1px solid rgba(71, 85, 105, 0.3)',
-      }}>
+      <div className="page-header">
         <div>
-          <h1 style={{
-            margin: '0 0 16px 0',
-            fontSize: 34,
-            fontWeight: 700,
-            background: 'linear-gradient(135deg, #f8fafc, #94a3b8)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-          }}>
-            系统管理
-          </h1>
-          <p style={{ margin: 0, color: '#64748b', fontSize: 14 }}>
-            查看系统信息和管理系统服务
-          </p>
+          <h1 className="page-title">系统管理</h1>
+          <p className="page-subtitle">查看系统信息和管理系统服务</p>
         </div>
       </div>
 
       {servers.length === 0 ? (
-        <div style={{
-          textAlign: 'center',
-          padding: '80px 20px',
-          color: '#64748b',
-        }}>
+        <div className="empty-state">
           <h3 style={{ margin: '0 0 8px', fontSize: 18, color: '#94a3b8' }}>还没有添加服务器</h3>
           <p style={{ margin: 0, fontSize: 14 }}>请先在「服务器」页面中添加服务器</p>
         </div>
@@ -462,31 +434,15 @@ export function System() {
               <div style={{ display: 'flex', gap: 8, background: 'rgba(15, 23, 42, 0.6)', padding: 0, borderRadius: 10 }}>
                 <button
                   onClick={() => setActiveTab('info')}
-                  style={{
-                    padding: '8px 16px',
-                    background: activeTab === 'info' ? 'linear-gradient(135deg, #6366f1, #8b5cf6)' : 'transparent',
-                    border: 'none',
-                    borderRadius: 8,
-                    color: '#fff',
-                    cursor: 'pointer',
-                    fontSize: 16,
-                    fontWeight: 500,
-                  }}
+                  className={`btn ${activeTab === 'info' ? 'btn-primary' : 'btn-ghost'}`}
+                  style={{ fontSize: 16 }}
                 >
                   系统信息
                 </button>
                 <button
                   onClick={() => setActiveTab('services')}
-                  style={{
-                    padding: '8px 16px',
-                    background: activeTab === 'services' ? 'linear-gradient(135deg, #6366f1, #8b5cf6)' : 'transparent',
-                    border: 'none',
-                    borderRadius: 8,
-                    color: '#fff',
-                    cursor: 'pointer',
-                    fontSize: 16,
-                    fontWeight: 500,
-                  }}
+                  className={`btn ${activeTab === 'services' ? 'btn-primary' : 'btn-ghost'}`}
+                  style={{ fontSize: 16 }}
                 >
                   系统服务
                 </button>
@@ -494,18 +450,8 @@ export function System() {
               <button
                 onClick={activeTab === 'info' ? loadSystemInfo : loadServices}
                 disabled={loading || servicesLoading}
-                style={{
-                  marginLeft: 'auto',
-                  padding: '10px 18px',
-                  background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
-                  border: 'none',
-                  borderRadius: 10,
-                  color: '#fff',
-                  cursor: (loading || servicesLoading) ? 'wait' : 'pointer',
-                  fontSize: 16,
-                  fontWeight: 600,
-                  opacity: (loading || servicesLoading) ? 0.7 : 1,
-                }}
+                className="btn btn-primary"
+                style={{ marginLeft: 'auto' }}
               >
                 {loading || servicesLoading ? '刷新中...' : '刷新'}
               </button>
@@ -569,13 +515,7 @@ export function System() {
                     />
                   </div>
 
-                  <div style={{
-                    background: 'linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95))',
-                    borderRadius: 16,
-                    padding: 24,
-                    border: '1px solid rgba(71, 85, 105, 0.4)',
-                    backdropFilter: 'blur(20px)',
-                  }}>
+                  <div className="card">
                     <h3 style={{ margin: '0 0 16px', fontSize: 16, color: '#f8fafc' }}>
                       完整信息
                     </h3>
@@ -632,14 +572,8 @@ export function System() {
                     </div>
                   </div>
                 <div
-                  className="mobile-table-scroll"
-                  style={{
-                    background: 'linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95))',
-                    borderRadius: 16,
-                    border: '1px solid rgba(71, 85, 105, 0.4)',
-                    backdropFilter: 'blur(20px)',
-                    overflow: 'hidden',
-                  }}>
+                  className="mobile-table-scroll card"
+                >
                   <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                     <thead>
                       <tr style={{ background: 'rgba(15, 23, 42, 0.6)' }}>
@@ -698,16 +632,8 @@ export function System() {
                               {service.status !== 'running' && (
                                 <button
                                   onClick={() => handleServiceAction(service.name, 'start')}
-                                  style={{
-                                    padding: '6px 10px',
-                                    background: 'rgba(34, 197, 94, 0.15)',
-                                    border: '1px solid rgba(34, 197, 94, 0.3)',
-                                    borderRadius: 6,
-                                    color: '#4ade80',
-                                    cursor: 'pointer',
-                                    fontSize: 12,
-                                    fontWeight: 500,
-                                  }}
+                                  className="btn btn-success"
+                                  style={{ fontSize: 12, padding: '6px 10px' }}
                                 >
                                   启动
                                 </button>
@@ -716,31 +642,15 @@ export function System() {
                                 <>
                                   <button
                                     onClick={() => handleServiceAction(service.name, 'stop')}
-                                    style={{
-                                      padding: '6px 10px',
-                                      background: 'rgba(239, 68, 68, 0.15)',
-                                      border: '1px solid rgba(239, 68, 68, 0.3)',
-                                      borderRadius: 6,
-                                      color: '#f87171',
-                                      cursor: 'pointer',
-                                      fontSize: 12,
-                                      fontWeight: 500,
-                                    }}
+                                    className="btn btn-danger"
+                                    style={{ fontSize: 12, padding: '6px 10px' }}
                                   >
                                     停止
                                   </button>
                                   <button
                                     onClick={() => handleServiceAction(service.name, 'restart')}
-                                    style={{
-                                      padding: '6px 10px',
-                                      background: 'rgba(245, 158, 11, 0.15)',
-                                      border: '1px solid rgba(245, 158, 11, 0.3)',
-                                      borderRadius: 6,
-                                      color: '#fbbf24',
-                                      cursor: 'pointer',
-                                      fontSize: 12,
-                                      fontWeight: 500,
-                                    }}
+                                    className="btn btn-warning"
+                                    style={{ fontSize: 12, padding: '6px 10px' }}
                                   >
                                     重启
                                   </button>
@@ -749,16 +659,8 @@ export function System() {
                               {!service.enabled && (
                                 <button
                                   onClick={() => handleServiceAction(service.name, 'enable')}
-                                  style={{
-                                    padding: '6px 10px',
-                                    background: 'rgba(99, 102, 241, 0.15)',
-                                    border: '1px solid rgba(99, 102, 241, 0.3)',
-                                    borderRadius: 6,
-                                    color: '#a5b4fc',
-                                    cursor: 'pointer',
-                                    fontSize: 12,
-                                    fontWeight: 500,
-                                  }}
+                                  className="btn btn-primary"
+                                  style={{ fontSize: 12, padding: '6px 10px' }}
                                 >
                                   启用
                                 </button>
@@ -766,16 +668,8 @@ export function System() {
                               {service.enabled && (
                                 <button
                                   onClick={() => handleServiceAction(service.name, 'disable')}
-                                  style={{
-                                    padding: '6px 10px',
-                                    background: 'rgba(100, 116, 139, 0.15)',
-                                    border: '1px solid rgba(100, 116, 139, 0.3)',
-                                    borderRadius: 6,
-                                    color: '#94a3b8',
-                                    cursor: 'pointer',
-                                    fontSize: 12,
-                                    fontWeight: 500,
-                                  }}
+                                  className="btn btn-secondary"
+                                  style={{ fontSize: 12, padding: '6px 10px' }}
                                 >
                                   禁用
                                 </button>
@@ -783,16 +677,8 @@ export function System() {
                               {canUpdateSubscription(service.name) && (
                                 <button
                                   onClick={() => handleServiceAction(service.name, 'update-subscription')}
-                                  style={{
-                                    padding: '6px 10px',
-                                    background: 'rgba(59, 130, 246, 0.15)',
-                                    border: '1px solid rgba(59, 130, 246, 0.35)',
-                                    borderRadius: 6,
-                                    color: '#93c5fd',
-                                    cursor: 'pointer',
-                                    fontSize: 12,
-                                    fontWeight: 500,
-                                  }}
+                                  className="btn btn-info"
+                                  style={{ fontSize: 12, padding: '6px 10px' }}
                                 >
                                   更新订阅
                                 </button>

@@ -36,7 +36,7 @@ function TabBar({ activeTab, onTabChange }: { activeTab: TabType; onTabChange: (
 }
 
 function TabIcon({ name, active }: { name: string; active: boolean }) {
-  const color = active ? '#6366f1' : '#64748b'
+  const color = active ? 'var(--color-primary)' : 'var(--color-ink-subtle)'
 
   const icons: Record<string, ReactNode> = {
     dashboard: (

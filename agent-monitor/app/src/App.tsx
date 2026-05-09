@@ -12,16 +12,9 @@ function NavItem({ link }: { link: { to: string; end?: boolean; label: string } 
     <NavLink
       to={link.to}
       end={link.end}
-      style={({ isActive, isPending }) => ({
-        padding: '10px 20px',
-        color: isPending ? '#888' : (isActive ? '#0f0' : '#aaa'),
-        textDecoration: 'none',
-        display: 'block',
-        borderRadius: 6,
-        marginLeft: 4,
-        marginRight: 4,
-      })}
-      className="nav-link"
+      className={({ isActive, isPending }) =>
+        `nav-link ${isPending ? '' : isActive ? 'active' : ''}`
+      }
     >
       {link.label}
     </NavLink>
@@ -42,57 +35,40 @@ function AppShell() {
   ]
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        position: 'relative',
-        paddingTop: 32,
-      }}
-    >
+    <div className="page-container">
       {/* 顶部拖拽区 */}
-      <div
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          height: 32,
-          background: '#0f172a',
-          borderBottom: '1px solid rgba(71, 85, 105, 0.2)',
-          WebkitAppRegion: 'drag' as any,
-          zIndex: 50,
-        } as any}
-      />
+      <div className="titlebar" />
 
-      <div style={{ display: 'flex', minHeight: 'calc(100vh - 32px)' }}>
+      <div className="page-content">
         {/* 桌面端侧栏 */}
-        <nav style={{
-          width: 180,
-          background: '#16213e',
-          padding: '16px 0',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 4,
-        }}>
+        <nav className="sidebar">
+          <div className="sidebar-logo">
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="2" y="4" width="24" height="16" rx="2" fill="#5e6ad2"/>
+              <rect x="4" y="7" width="20" height="4" rx="1" fill="#010102"/>
+              <circle cx="7" cy="9" r="1" fill="#22c55e"/>
+              <circle cx="11" cy="9" r="1" fill="#22c55e"/>
+              <rect x="4" y="13" width="20" height="4" rx="1" fill="#010102"/>
+              <circle cx="7" cy="15" r="1" fill="#f59e0b"/>
+              <circle cx="11" cy="15" r="1" fill="#22c55e"/>
+              <polyline points="2,24 8,24 12,18 16,26 20,22 24,24 26,24" fill="none" stroke="#818cf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span className="sidebar-logo-text">AgentMonitor</span>
+          </div>
           {navLinks.slice(0, 4).map((link) => (
             <NavItem key={link.to} link={link} />
           ))}
-          <div style={{ height: 1, background: '#333', margin: '8px 16px' }} />
+          <div className="sidebar-divider" />
           {navLinks.slice(4).map((link) => (
             <NavItem key={link.to} link={link} />
           ))}
         </nav>
 
         <main
+          className="main-content"
           style={{
-            flex: 1,
-            padding: 24,
             overflow: location.pathname === '/dockge' ? 'hidden' : 'auto',
-            display: 'flex',
-            flexDirection: 'column',
-            minHeight: 0,
-            WebkitAppRegion: 'no-drag' as any,
-          } as any}
+          }}
         >
           <div key={location.pathname} className="page-enter" style={{ flex: 1, minHeight: 0 }}>
             <Routes>

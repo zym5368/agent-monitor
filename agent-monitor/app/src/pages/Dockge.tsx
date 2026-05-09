@@ -8,22 +8,15 @@ export function Dockge() {
   const dockgeUrl = selected?.dockgeUrl?.trim() || (selected ? `http://${selected.host}:9001` : '')
 
   return (
-    <div className="dockge-page" style={{ height: '100%', minHeight: 0, display: 'flex', flexDirection: 'column' }}>
-      <h1 style={{ marginTop: 0, marginBottom: 12 }}>Dockge（应用内嵌）</h1>
-      <div className="dockge-button-row" style={{ display: 'flex', gap: 12, marginBottom: 12, flexWrap: 'wrap' }}>
+    <div className="page-container" style={{ height: '100%', minHeight: 0, display: 'flex', flexDirection: 'column', padding: 'var(--space-lg)' }}>
+      <h1 className="page-title" style={{ marginTop: 0, marginBottom: 12 }}>Dockge（应用内嵌）</h1>
+      <div style={{ display: 'flex', gap: 12, marginBottom: 12, flexWrap: 'wrap' }}>
         {servers.map((s) => (
           <button
             key={s.id}
             type="button"
             onClick={() => setSelectedId(s.id)}
-            style={{
-              padding: '8px 16px',
-              background: selectedId === s.id ? '#0f3460' : '#16213e',
-              color: '#eee',
-              border: '1px solid #333',
-              borderRadius: 6,
-              cursor: 'pointer',
-            }}
+            className={`btn ${selectedId === s.id ? 'btn-primary' : 'btn-secondary'}`}
           >
             {s.name}
           </button>
@@ -31,11 +24,10 @@ export function Dockge() {
       </div>
       {selected && dockgeUrl ? (
         <div
-          className="dockge-iframe-container"
           style={{
             flex: '1 1 auto',
             minHeight: 0,
-            border: '1px solid #333',
+            border: '1px solid var(--color-hairline)',
             borderRadius: 8,
             overflow: 'hidden',
           }}
@@ -48,7 +40,7 @@ export function Dockge() {
           />
         </div>
       ) : (
-        <p style={{ color: '#888' }}>请先选择服务器，并确保该服务器已配置 Dockge 地址（默认 :9001）。</p>
+        <p style={{ color: 'var(--color-ink-subtle)' }}>请先选择服务器，并确保该服务器已配置 Dockge 地址（默认 :9001）。</p>
       )}
     </div>
   )

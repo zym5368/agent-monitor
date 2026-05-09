@@ -108,35 +108,21 @@ export function Alerts() {
   }
 
   return (
-    <div className="alerts-page">
-      <h1 style={{ marginTop: 0, marginBottom: 16 }}>告警配置</h1>
+    <div className="alerts-page page-container" style={{ padding: 'var(--space-lg)' }}>
+      <h1 className="page-title" style={{ marginTop: 0 }}>告警配置</h1>
 
       <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
         <button
           onClick={handleRefreshFromAgents}
           disabled={refreshingAgents.size > 0 || agentServers.length === 0}
-          style={{
-            padding: '8px 16px',
-            background: '#1e3a5f',
-            border: '1px solid #333',
-            borderRadius: 6,
-            color: refreshingAgents.size > 0 || agentServers.length === 0 ? '#666' : '#4fc3f7',
-            cursor: refreshingAgents.size > 0 || agentServers.length === 0 ? 'not-allowed' : 'pointer',
-          }}
+          className="btn btn-secondary"
         >
           {refreshingAgents.size > 0 ? '刷新中...' : '刷新告警规则'}
         </button>
         <button
           onClick={() => setShowRefreshPanel(!showRefreshPanel)}
           disabled={Object.keys(refreshResults).length === 0}
-          style={{
-            padding: '8px 16px',
-            background: '#16213e',
-            border: '1px solid #333',
-            borderRadius: 6,
-            color: Object.keys(refreshResults).length === 0 ? '#666' : '#aaa',
-            cursor: Object.keys(refreshResults).length === 0 ? 'not-allowed' : 'pointer',
-          }}
+          className="btn btn-ghost"
         >
           {showRefreshPanel ? '隐藏刷新结果' : `查看刷新结果 (${Object.keys(refreshResults).length})`}
         </button>
@@ -146,14 +132,7 @@ export function Alerts() {
 
       {/* 刷新结果面板 */}
       {showRefreshPanel && Object.keys(refreshResults).length > 0 && (
-        <div
-          style={{
-            background: '#16213e',
-            borderRadius: 8,
-            padding: 20,
-            marginBottom: 20,
-          }}
-        >
+        <div className="card" style={{ marginBottom: 20 }}>
           <h3 style={{ marginTop: 0, marginBottom: 16 }}>刷新结果</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             {agentServers.map((server) => {
@@ -166,7 +145,7 @@ export function Alerts() {
                   key={server.id}
                   style={{
                     padding: '12px 16px',
-                    background: '#0f172a',
+                    background: 'var(--color-surface-1)',
                     borderRadius: 6,
                   }}
                 >
@@ -176,7 +155,7 @@ export function Alerts() {
                     </span>
                     {isRefreshing && <span style={{ color: '#94a3b8', fontSize: 13 }}>刷新中...</span>}
                     {result && (
-                      <span style={{ color: result.success ? '#22c55e' : '#ef4444', fontSize: 13 }}>
+                      <span style={{ color: result.success ? 'var(--color-success)' : 'var(--color-danger)', fontSize: 13 }}>
                         {result.message}
                       </span>
                     )}
@@ -194,12 +173,10 @@ export function Alerts() {
                             {result.rules.map((rule) => (
                               <span
                                 key={rule.id}
+                                className="badge"
                                 style={{
-                                  padding: '2px 8px',
-                                  background: rule.enabled ? '#1e3a2f' : '#374151',
-                                  borderRadius: 4,
-                                  fontSize: 12,
-                                  color: rule.enabled ? '#22c55e' : '#9ca3af',
+                                  background: rule.enabled ? 'rgba(34, 197, 94, 0.2)' : 'rgba(100, 116, 139, 0.2)',
+                                  color: rule.enabled ? '#4ade80' : '#9ca3af',
                                 }}
                               >
                                 {rule.name}
@@ -220,27 +197,13 @@ export function Alerts() {
       <div style={{ display: 'flex', gap: 8, marginBottom: 20 }}>
         <button
           onClick={() => setActiveTab('rules')}
-          style={{
-            padding: '8px 16px',
-            background: activeTab === 'rules' ? '#2a3f5f' : '#16213e',
-            border: '1px solid #333',
-            borderRadius: 6,
-            color: activeTab === 'rules' ? '#0f0' : '#aaa',
-            cursor: 'pointer',
-          }}
+          className={`btn ${activeTab === 'rules' ? 'btn-primary' : 'btn-secondary'}`}
         >
           告警规则
         </button>
         <button
           onClick={() => setActiveTab('channels')}
-          style={{
-            padding: '8px 16px',
-            background: activeTab === 'channels' ? '#2a3f5f' : '#16213e',
-            border: '1px solid #333',
-            borderRadius: 6,
-            color: activeTab === 'channels' ? '#0f0' : '#aaa',
-            cursor: 'pointer',
-          }}
+          className={`btn ${activeTab === 'channels' ? 'btn-primary' : 'btn-secondary'}`}
         >
           通知渠道
         </button>
@@ -254,14 +217,7 @@ export function Alerts() {
                 setEditingRule(null)
                 setShowRuleForm(true)
               }}
-              style={{
-                padding: '8px 16px',
-                background: '#2a3f5f',
-                border: '1px solid #333',
-                borderRadius: 6,
-                color: '#0f0',
-                cursor: 'pointer',
-              }}
+              className="btn btn-primary"
             >
               + 添加规则
             </button>
@@ -318,14 +274,7 @@ export function Alerts() {
                 setEditingChannel(null)
                 setShowChannelForm(true)
               }}
-              style={{
-                padding: '8px 16px',
-                background: '#2a3f5f',
-                border: '1px solid #333',
-                borderRadius: 6,
-                color: '#0f0',
-                cursor: 'pointer',
-              }}
+              className="btn btn-primary"
             >
               + 添加渠道
             </button>
